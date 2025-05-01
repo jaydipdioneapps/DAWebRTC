@@ -105,7 +105,7 @@ public class DAWebRTC: NSObject {
     }
     
     //MARK: - Setup local stream
-    func setupLocalStream(view: RTCMTLVideoView, type: CallType, isNeedToAddPeerConnection: Bool = false, user: String = "", completion: @escaping (Bool) -> Void) {
+    public func setupLocalStream(view: RTCMTLVideoView, type: CallType, isNeedToAddPeerConnection: Bool = false, user: String = "", completion: @escaping (Bool) -> Void) {
         if type == .audio {
             self.localAudioTrack = self.peerConnectionFactory.audioTrack(withTrackId: "audio0")
             completion(true)
@@ -147,7 +147,7 @@ public class DAWebRTC: NSObject {
     
     //MARK: -  Create group call offer
     
-    func startCall(participants: [CallParticipant], channelName: String, groupId: String,
+    public func startCall(participants: [CallParticipant], channelName: String, groupId: String,
                        type: CallType, callInitiateType: CallInitiateType,
                        isInviting: Bool = false) {
         // Initialize call settings
@@ -239,7 +239,7 @@ public class DAWebRTC: NSObject {
     }
     
     //MARK: - Handle offer
-    func handleOffer(from userId: String, sdp: String, type: CallType, callInitiateType: CallInitiateType, isInviting: Bool, isRejoin: Bool) {
+    public func handleOffer(from userId: String, sdp: String, type: CallType, callInitiateType: CallInitiateType, isInviting: Bool, isRejoin: Bool) {
         if !isInviting {
             if type == .audio {
                 isVideoMuted = false
@@ -352,7 +352,7 @@ public class DAWebRTC: NSObject {
         }
     }
     
-    func handleAnswer(from userId: String, sdp: String) {
+    public func handleAnswer(from userId: String, sdp: String) {
         guard let peerConnection = peerConnections[userId] else { return }
 
         let remoteDescription = RTCSessionDescription(type: .answer, sdp: sdp)
@@ -367,7 +367,7 @@ public class DAWebRTC: NSObject {
         }
     }
     
-    func handleNewICECandidate(from userId: String, candidateData: RTCIceCandidate) {
+    public func handleNewICECandidate(from userId: String, candidateData: RTCIceCandidate) {
         guard let peerConnection = peerConnections[userId] else {
             pendingCandidates[userId, default: []].append(candidateData)
             return
@@ -434,7 +434,7 @@ public class DAWebRTC: NSObject {
         delegate?.daWebRTC(self, sendOfferFromSDP: self.channelName ?? "", sdp: sdp.sdp, recieverId: [userId].joined(separator: ","), type: SignalingEventType.offer.rawValue)
     }
     
-    func handleIncomingOffer(_ offer: RTCSessionDescription, from userId: String) {
+    public func handleIncomingOffer(_ offer: RTCSessionDescription, from userId: String) {
         if callType == .audio && self.localAudioTrack == nil {
             self.handlePendingHandleOffer.append(userId)
         } else if callType == .video && self.localVideoTrack == nil {
@@ -499,7 +499,7 @@ public class DAWebRTC: NSObject {
         self.setRemoteVideoView?(remoteVideoTrack)
     }
     
-    func handleParticipantLeave(userId: String, isLeave: Bool = false) {
+    public func handleParticipantLeave(userId: String, isLeave: Bool = false) {
         
         if isLeave {
             if userId != streamId {
