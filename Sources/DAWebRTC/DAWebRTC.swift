@@ -19,25 +19,25 @@ public class DAWebRTC: NSObject {
     var streamId = "stream0"
     var capturer: RTCCameraVideoCapturer?
     
-    var callInitiateType: CallInitiateType = .outgoing
-    var callType: CallType = .audio
-    var channelName: String? = nil
-    var isGroupId = ""
-    var isVideoMuted = false
-    var isAudioMuted = false
-    var isVideoEnabled : Bool = false
-    var isSpekerOn = false
-    var isHangOut = false
-    var isJoined: Bool = false
-    var arrIcCandidate: [ICECandidateShare] = []
+    public var callInitiateType: CallInitiateType = .outgoing
+    public var callType: CallType = .audio
+    public var channelName: String? = nil
+    public var isGroupId = ""
+    public var isVideoMuted = false
+    public var isAudioMuted = false
+    public var isVideoEnabled : Bool = false
+    public var isSpekerOn = false
+    public var isHangOut = false
+    public var isJoined: Bool = false
+    public var arrIcCandidate: [ICECandidateShare] = []
     public var handlePendingHandleOffer: [String] = []
     var remoteDescriptionSet: Set<String> = []
     var pendingCandidates: [String: [RTCIceCandidate]] = [:]
     
     public var setRemoteVideoView: ((_ remoteVideoTrack: RTCVideoTrack) -> Void)?
     private var disconnectTimers: [String: Timer] = [:]
-    var remoteVideoViews: [String: RTCMTLVideoView] = [:]
-    var remoteVideoTracks: [String: RTCVideoTrack] = [:]
+    public var remoteVideoViews: [String: RTCMTLVideoView] = [:]
+    public var remoteVideoTracks: [String: RTCVideoTrack] = [:]
     var secondsElapsed: Int = 0
     var ringingTimer: Timer?
     var selfTimer : Timer?
