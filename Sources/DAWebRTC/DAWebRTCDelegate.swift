@@ -8,7 +8,7 @@
 import Foundation
 
 public protocol DAWebRTCDelegate: AnyObject {
-    func daWebRTC(_ manager: DAWebRTC, didSendOffer channelName: String, arrOffer: [[String: String]], groupId: String?, type: String, isInviting: Bool)
+    func daWebRTC(_ manager: DAWebRTC, didSendOffer channelName: String, arrOffer: [[String: String]], groupId: String?, type: CallType, isInviting: Bool)
     func daWebRTC(_ manager: DAWebRTC, didCreateAnswer channelName: String, sdp: String, recieverId: String, type: String)
     func daWebRTC(_ manager: DAWebRTC, didGenerateCandidate channelName: String, recieverId: String, candidate: [String: Any], type: String)
     func daWebRTC(_ manager: DAWebRTC, pendingHandleOffer userId: String, isInviting: Bool, sdp: String, isRejoin: Bool, groupId: String)

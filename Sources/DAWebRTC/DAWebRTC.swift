@@ -191,7 +191,7 @@ public class DAWebRTC: NSObject {
             }
             
             if !arrOffer.isEmpty {
-                self.delegate?.daWebRTC(self, didSendOffer: channelName, arrOffer: arrOffer, groupId: groupId, type: type.rawValue, isInviting: isInviting)
+                self.delegate?.daWebRTC(self, didSendOffer: channelName, arrOffer: arrOffer, groupId: groupId, type: type, isInviting: isInviting)
             } else {
                 debugPrint("No offers were created successfully")
                 // Handle complete failure case
