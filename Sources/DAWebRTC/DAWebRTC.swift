@@ -28,7 +28,6 @@ public class DAWebRTC: NSObject {
     public var isVideoEnabled : Bool = false
     public var isSpekerOn = false
     public var isHangOut = false
-    public var isJoined: Bool = false
     public var arrIcCandidate: [ICECandidateShare] = []
     public var handlePendingHandleOffer: [String] = []
     var remoteDescriptionSet: Set<String> = []
@@ -833,7 +832,6 @@ extension DAWebRTC {
     
     // Stop the timer when it's no longer needed, e.g., when the call ends
     func stopTimer(fromOffline: Bool = false) {
-        self.isJoined = false
         delegate?.daWebRTC(self, callEnded: true)
         if self.timer != nil {
             self.timer?.invalidate()
