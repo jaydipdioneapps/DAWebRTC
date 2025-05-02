@@ -18,12 +18,3 @@ public enum CallInitiateType: String {
     case outgoing = "Outgoing"
     case missed = "Missed"
 }
-
-public enum SignalingEventType: String {
-    case offer
-    case answer
-    case candidate
-    case speaker
-    case muteVideo
-    case callCut
-}

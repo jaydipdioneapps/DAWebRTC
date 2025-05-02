@@ -290,7 +290,7 @@ public class DAWebRTC: NSObject {
                     debugPrint("Error setting local description: \(error.localizedDescription)")
                     return
                 }
-                self?.delegate?.daWebRTC(self!, didCreateAnswer: self?.channelName ?? "", sdp: answer.sdp, recieverId: [userId].joined(separator: ","), type: SignalingEventType.answer.rawValue)
+                self?.delegate?.daWebRTC(self!, didCreateAnswer: self?.channelName ?? "", sdp: answer.sdp, recieverId: [userId].joined(separator: ","))
                 self?.addIceCandidate(from: userId)
             }
         }
@@ -316,7 +316,7 @@ public class DAWebRTC: NSObject {
         pending.forEach { pendingCandidate in
             pendingCandidate.candidate.forEach { candidate in
                 let candidate = ["sdp": candidate.sdp, "sdpMid": candidate.sdpMid ?? "", "sdpMLineIndex": candidate.sdpMLineIndex] as [String : Any]
-                self.delegate?.daWebRTC(self, didGenerateCandidate: self.channelName ?? "", recieverId: [pendingCandidate.userId].joined(separator: ","), candidate: candidate, type: SignalingEventType.candidate.rawValue)
+                self.delegate?.daWebRTC(self, didGenerateCandidate: self.channelName ?? "", recieverId: [pendingCandidate.userId].joined(separator: ","), candidate: candidate)
             }
         }
         arrIcCandidate.removeAll(where: { $0.userId == userId })
@@ -348,7 +348,7 @@ public class DAWebRTC: NSObject {
                 }
             })
             
-            self?.delegate?.daWebRTC(self!, didCreateOffer: self?.channelName ?? "", sdp: sdp.sdp, recieverId: [userId].joined(separator: ","), isAudioToVideo: isAudioToVideo || isNeedToCreateNew ? "true" : "false", videoCallRequestAccepted: isVideoCallRequestAccepted ? "true" : "false", type: SignalingEventType.offer.rawValue)
+            self?.delegate?.daWebRTC(self!, didCreateOffer: self?.channelName ?? "", sdp: sdp.sdp, recieverId: [userId].joined(separator: ","), isAudioToVideo: isAudioToVideo || isNeedToCreateNew ? "true" : "false", videoCallRequestAccepted: isVideoCallRequestAccepted ? "true" : "false")
         }
     }
     
@@ -415,7 +415,7 @@ public class DAWebRTC: NSObject {
         debugPrint("Channel name : \(channelName)")
         let candidateObj = ["sdp": candidate.sdp, "sdpMid": candidate.sdpMid ?? "", "sdpMLineIndex": candidate.sdpMLineIndex] as [String : Any]
         
-        self.delegate?.daWebRTC(self, didGenerateCandidate: self.channelName ?? "", recieverId: [userId].joined(separator: ","), candidate: candidateObj, type: SignalingEventType.candidate.rawValue)
+        self.delegate?.daWebRTC(self, didGenerateCandidate: self.channelName ?? "", recieverId: [userId].joined(separator: ","), candidate: candidateObj)
         
         if let index = arrIcCandidate.firstIndex(where: { $0.userId ==  userId}) {
             arrIcCandidate[index].candidate.append(candidate)
@@ -431,7 +431,7 @@ public class DAWebRTC: NSObject {
     }
     
     func sendOfferFromSDP(sdp: RTCSessionDescription, userId: String) {
-        delegate?.daWebRTC(self, sendOfferFromSDP: self.channelName ?? "", sdp: sdp.sdp, recieverId: [userId].joined(separator: ","), type: SignalingEventType.offer.rawValue)
+        delegate?.daWebRTC(self, sendOfferFromSDP: self.channelName ?? "", sdp: sdp.sdp, recieverId: [userId].joined(separator: ","))
     }
     
     public func handleIncomingOffer(_ offer: RTCSessionDescription, from userId: String) {
@@ -538,7 +538,7 @@ public class DAWebRTC: NSObject {
             }
         }
         
-        delegate?.daWebRTC(self, callCut: self.channelName ?? "", recieverId: arrPeerConnectionId.joined(separator: ","), type: SignalingEventType.callCut.rawValue)
+        delegate?.daWebRTC(self, callCut: self.channelName ?? "", recieverId: arrPeerConnectionId.joined(separator: ","))
         // Clean up all peer connections and UI elements
         for peerConnection in peerConnections.values {
             peerConnection.close()
@@ -586,7 +586,7 @@ public class DAWebRTC: NSObject {
                 arrPeerConnectionId.append(userId)
             }
         }
-        delegate?.daWebRTC(self, sendAudioMuteStatus: self.channelName ?? "", recieverId: arrPeerConnectionId.joined(separator: ","), audioMuted: isMuted ? "true" : "false", type: SignalingEventType.speaker.rawValue)
+        delegate?.daWebRTC(self, sendAudioMuteStatus: self.channelName ?? "", recieverId: arrPeerConnectionId.joined(separator: ","), audioMuted: isMuted ? "true" : "false")
     }
     
     // MARK: - Video enable/disable
@@ -600,7 +600,7 @@ public class DAWebRTC: NSObject {
                 arrPeerConnectionId.append(userId)
             }
         }
-        delegate?.daWebRTC(self, sendVideoMuteStatus: self.channelName ?? "", recieverId: arrPeerConnectionId.joined(separator: ","), videoMuted: "false", type: SignalingEventType.muteVideo.rawValue)
+        delegate?.daWebRTC(self, sendVideoMuteStatus: self.channelName ?? "", recieverId: arrPeerConnectionId.joined(separator: ","), videoMuted: "false")
     }
     
     func disableVideo() {
@@ -612,7 +612,7 @@ public class DAWebRTC: NSObject {
                 arrPeerConnectionId.append(userId)
             }
         }
-        delegate?.daWebRTC(self, sendVideoMuteStatus: self.channelName ?? "", recieverId: arrPeerConnectionId.joined(separator: ","), videoMuted: "true", type: SignalingEventType.muteVideo.rawValue)
+        delegate?.daWebRTC(self, sendVideoMuteStatus: self.channelName ?? "", recieverId: arrPeerConnectionId.joined(separator: ","), videoMuted: "true")
     }
     
     // Turn speaker on
