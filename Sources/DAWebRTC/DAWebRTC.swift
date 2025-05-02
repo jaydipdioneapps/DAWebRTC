@@ -468,7 +468,7 @@ public class DAWebRTC: NSObject {
         }
     }
     
-    func handleNetworkDisconnection(userId: String, isSelfUser: Bool = false) {
+    public func handleNetworkDisconnection(userId: String, isSelfUser: Bool = false) {
         // Already scheduled
         if disconnectTimers[userId] != nil {
             return
@@ -488,7 +488,7 @@ public class DAWebRTC: NSObject {
         disconnectTimers[userId] = timer
     }
 
-    func cancelDisconnectTimer(userId: String) {
+    public func cancelDisconnectTimer(userId: String) {
         disconnectTimers[userId]?.invalidate()
         disconnectTimers.removeValue(forKey: userId)
     }
