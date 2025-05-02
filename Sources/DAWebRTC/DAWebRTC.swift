@@ -423,13 +423,13 @@ public class DAWebRTC: NSObject {
         }
     }
     
-    func handleRejoin(for userId: String) {
+    public func handleRejoin(for userId: String) {
         handleParticipantLeave(userId: userId)
         arrIcCandidate.removeAll(where: { $0.userId == userId })
         createNewConnections(userId: userId)
     }
     
-    func sendOfferFromSDP(sdp: RTCSessionDescription, userId: String) {
+    public func sendOfferFromSDP(sdp: RTCSessionDescription, userId: String) {
         delegate?.daWebRTC(self, sendOfferFromSDP: self.channelName ?? "", sdp: sdp.sdp, recieverId: [userId].joined(separator: ","))
     }
     
@@ -460,7 +460,7 @@ public class DAWebRTC: NSObject {
         }
     }
     
-    func restartICECandidates() {
+    public func restartICECandidates() {
         self.peerConnections.keys.forEach { userId in
             self.handleParticipantLeave(userId: userId)
             self.remoteDescriptionSet.remove(userId)
@@ -528,7 +528,7 @@ public class DAWebRTC: NSObject {
     }
     
     // Method to end the call
-    func hangOut() {
+    public func hangOut() {
         var arrPeerConnectionId = [String]()
         
         self.peerConnections.keys.forEach { userId in
@@ -566,13 +566,13 @@ public class DAWebRTC: NSObject {
     
     // MARK: - Mute/Unmute Audio
     
-    func enableAudio() {
+    public func enableAudio() {
         isAudioMuted = false
         localAudioTrack?.isEnabled = true
         sendAudioMuteStatus(isMuted: false)
     }
 
-    func disableAudio() {
+    public func disableAudio() {
         isAudioMuted = true
         localAudioTrack?.isEnabled = false
         sendAudioMuteStatus(isMuted: true)
@@ -590,7 +590,7 @@ public class DAWebRTC: NSObject {
     
     // MARK: - Video enable/disable
     
-    func enableVideo() {
+    public func enableVideo() {
         localVideoTrack?.isEnabled = true
         isVideoMuted = false
         var arrPeerConnectionId = [String]()
@@ -602,7 +602,7 @@ public class DAWebRTC: NSObject {
         delegate?.daWebRTC(self, sendVideoMuteStatus: self.channelName ?? "", recieverId: arrPeerConnectionId.joined(separator: ","), videoMuted: "false")
     }
     
-    func disableVideo() {
+    public func disableVideo() {
         localVideoTrack?.isEnabled = false
         isVideoMuted = true
         var arrPeerConnectionId = [String]()
@@ -615,7 +615,7 @@ public class DAWebRTC: NSObject {
     }
     
     // Turn speaker on
-    func enableSpeaker() {
+    public func enableSpeaker() {
         isSpekerOn = true
         let audioSession = AVAudioSession.sharedInstance()
         do {
@@ -627,7 +627,7 @@ public class DAWebRTC: NSObject {
     }
     
     // Turn speaker off (use earpiece)
-    func disableSpeaker() {
+    public func disableSpeaker() {
         isSpekerOn = false
         let audioSession = AVAudioSession.sharedInstance()
         do {
@@ -640,7 +640,7 @@ public class DAWebRTC: NSObject {
     }
     
     // Toggle speaker state
-    func toggleSpeaker(isOn: Bool) {
+    public func toggleSpeaker(isOn: Bool) {
         if isOn {
             enableSpeaker()
         } else {
@@ -650,7 +650,7 @@ public class DAWebRTC: NSObject {
     
     // MARK: - Switch Camera
     
-    func switchCamera() {
+    public func switchCamera() {
         guard let capturer = self.capturer else { return }
         
         let currentPosition = capturer.captureSession.inputs
@@ -677,7 +677,7 @@ public class DAWebRTC: NSObject {
         }
     }
     
-    func switchLocalToRemoteVideoView(localView: RTCMTLVideoView, remoteView: RTCMTLVideoView, userId: String) {
+    public func switchLocalToRemoteVideoView(localView: RTCMTLVideoView, remoteView: RTCMTLVideoView, userId: String) {
         guard let remoteTracks = remoteVideoTracks[userId] else {
             return
         }
