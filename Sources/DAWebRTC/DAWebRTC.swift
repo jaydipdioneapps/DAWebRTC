@@ -353,7 +353,7 @@ public class DAWebRTC: NSObject {
     
     public func handleAnswer(from userId: String, sdp: String) {
         guard let peerConnection = peerConnections[userId] else { return }
-
+        debugPrint("handleAnswer 356 : \(sdp)")
         let remoteDescription = RTCSessionDescription(type: .answer, sdp: sdp)
         peerConnection.setRemoteDescription(remoteDescription) { error in
             if let error = error {
