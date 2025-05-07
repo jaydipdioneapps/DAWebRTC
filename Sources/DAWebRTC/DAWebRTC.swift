@@ -42,7 +42,7 @@ public class DAWebRTC: NSObject {
     var selfTimer : Timer?
     var timer: Timer?
     var audioPlayer: AVAudioPlayer?
-    var giveTimerUpdateToUI = true
+    public var giveTimerUpdateToUI = true
     var updateCallTimer: (_ time: String) -> Void = { _  in }
     var selfEndTimerObserver: (_ success: Bool) -> Void = { _ in }
     var endCallWhenAllMemberLeaved: (_ success: Bool) -> Void = { _  in }
