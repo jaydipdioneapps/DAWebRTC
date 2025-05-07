@@ -17,7 +17,7 @@ public class DAWebRTC: NSObject {
     public var localVideoTrack: RTCVideoTrack?
     public var localAudioTrack: RTCAudioTrack?
     var streamId = "stream0"
-    var capturer: RTCCameraVideoCapturer?
+    public var capturer: RTCCameraVideoCapturer?
     
     public var callInitiateType: CallInitiateType = .outgoing
     public var callType: CallType = .audio
