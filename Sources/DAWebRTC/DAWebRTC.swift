@@ -764,21 +764,21 @@ extension DAWebRTC: RTCPeerConnectionDelegate {
 }
 
 extension DAWebRTC {
-    func stopPlayingRingingSound() {
+    public func stopPlayingRingingSound() {
         ringingTimer?.invalidate()
         ringingTimer = nil
         audioPlayer?.stop()
         audioPlayer = nil
     }
     
-    func stopSelfTimer() {
+    public func stopSelfTimer() {
         if selfTimer != nil {
             self.selfTimer?.invalidate()
             self.selfTimer = nil
         }
     }
     
-    func startTimer() {
+    public func startTimer() {
         if (timer != nil) { return }
         timer = Timer.scheduledTimer(timeInterval:  1.0, target: self, selector: #selector(updateTimer), userInfo: nil, repeats: true)
     }
@@ -790,7 +790,7 @@ extension DAWebRTC {
         updateTimerLabel()
     }
     
-    func updateTimerLabel() {
+    public func updateTimerLabel() {
         if giveTimerUpdateToUI {
             let hours = secondsElapsed / 3600
             let minutes = (secondsElapsed / 60) % 60
@@ -804,7 +804,7 @@ extension DAWebRTC {
     }
     
     ///Ringing setups
-    func startPlayingRingingSoundRepeatedly() {
+    public func startPlayingRingingSoundRepeatedly() {
         stopPlayingRingingSound()
         playRingingSound() // Play immediately
         ringingTimer = Timer.scheduledTimer(withTimeInterval: 3.0, repeats: true) { [weak self] _ in
@@ -813,7 +813,7 @@ extension DAWebRTC {
         }
     }
     
-    func playRingingSound() {
+    public func playRingingSound() {
         guard let soundURL = Bundle.main.url(forResource: "ringing", withExtension: "aac") else {
             print("Failed to find ringing.wav in the bundle")
             return
@@ -830,7 +830,7 @@ extension DAWebRTC {
     }
     
     // Stop the timer when it's no longer needed, e.g., when the call ends
-    func stopTimer(fromOffline: Bool = false) {
+    public func stopTimer(fromOffline: Bool = false) {
         delegate?.daWebRTC(self, callEnded: true)
         if self.timer != nil {
             self.timer?.invalidate()
@@ -843,7 +843,7 @@ extension DAWebRTC {
         }
     }
     
-    func startSelfTimer() {
+    public func startSelfTimer() {
         stopSelfTimer()
         selfTimer = Timer.scheduledTimer(timeInterval: 90, target: self, selector: #selector(self.handleCallEndTimer(_:)), userInfo: nil, repeats: false)
     }
