@@ -14,8 +14,8 @@ public class DAWebRTC: NSObject {
     var iceServers: [RTCIceServer] = []
     public var peerConnections: [String: RTCPeerConnection] = [:]
     var sdpConnection: [String: RTCSessionDescription] = [:]
-    var localVideoTrack: RTCVideoTrack?
-    var localAudioTrack: RTCAudioTrack?
+    public var localVideoTrack: RTCVideoTrack?
+    public var localAudioTrack: RTCAudioTrack?
     var streamId = "stream0"
     var capturer: RTCCameraVideoCapturer?
     
