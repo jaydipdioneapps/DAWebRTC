@@ -37,15 +37,15 @@ public class DAWebRTC: NSObject {
     private var disconnectTimers: [String: Timer] = [:]
     public var remoteVideoViews: [String: RTCMTLVideoView] = [:]
     public var remoteVideoTracks: [String: RTCVideoTrack] = [:]
-    var secondsElapsed: Int = 0
-    var ringingTimer: Timer?
-    var selfTimer : Timer?
-    var timer: Timer?
-    var audioPlayer: AVAudioPlayer?
+    public var secondsElapsed: Int = 0
+    public var ringingTimer: Timer?
+    public var selfTimer : Timer?
+    public var timer: Timer?
+    public var audioPlayer: AVAudioPlayer?
     public var giveTimerUpdateToUI = true
-    var updateCallTimer: (_ time: String) -> Void = { _  in }
-    var selfEndTimerObserver: (_ success: Bool) -> Void = { _ in }
-    var endCallWhenAllMemberLeaved: (_ success: Bool) -> Void = { _  in }
+    public var updateCallTimer: (_ time: String) -> Void = { _  in }
+    public var selfEndTimerObserver: (_ success: Bool) -> Void = { _ in }
+    public var endCallWhenAllMemberLeaved: (_ success: Bool) -> Void = { _  in }
     
     public init(stunServer: String, turnServer: String, username: String, password: String, streamId: String) {
         super.init()
