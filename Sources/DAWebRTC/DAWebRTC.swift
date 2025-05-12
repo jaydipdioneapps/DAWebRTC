@@ -37,15 +37,6 @@ public class DAWebRTC: NSObject {
     private var disconnectTimers: [String: Timer] = [:]
     public var remoteVideoViews: [String: RTCMTLVideoView] = [:]
     public var remoteVideoTracks: [String: RTCVideoTrack] = [:]
-    public var secondsElapsed: Int = 0
-    public var ringingTimer: Timer?
-    public var selfTimer : Timer?
-    public var timer: Timer?
-    public var audioPlayer: AVAudioPlayer?
-    public var giveTimerUpdateToUI = true
-    public var updateCallTimer: (_ time: String) -> Void = { _  in }
-    public var selfEndTimerObserver: (_ success: Bool) -> Void = { _ in }
-    public var endCallWhenAllMemberLeaved: (_ success: Bool) -> Void = { _  in }
     
     public init(stunServer: String, turnServer: String, username: String, password: String, streamId: String) {
         super.init()
@@ -721,9 +712,6 @@ extension DAWebRTC: RTCPeerConnectionDelegate {
         if isConnectedSuccess {
             self.sendICECandidate(userId: userId)
             if userId != streamId {
-                self.stopPlayingRingingSound()
-                self.stopSelfTimer()
-                self.startTimer()
                 delegate?.daWebRTC(self, updateUserCallStatus: channelName ?? "", userId: userId, joinedStatus: true, isActive: true)
             }
         }
@@ -761,96 +749,4 @@ extension DAWebRTC: RTCPeerConnectionDelegate {
     public func peerConnection(_ peerConnection: RTCPeerConnection, didRemove candidates: [RTCIceCandidate]) {}
     
     public func peerConnection(_ peerConnection: RTCPeerConnection, didOpen dataChannel: RTCDataChannel) {}
-}
-
-extension DAWebRTC {
-    public func stopPlayingRingingSound() {
-        ringingTimer?.invalidate()
-        ringingTimer = nil
-        audioPlayer?.stop()
-        audioPlayer = nil
-    }
-    
-    public func stopSelfTimer() {
-        if selfTimer != nil {
-            self.selfTimer?.invalidate()
-            self.selfTimer = nil
-        }
-    }
-    
-    public func startTimer() {
-        if (timer != nil) { return }
-        timer = Timer.scheduledTimer(timeInterval:  1.0, target: self, selector: #selector(updateTimer), userInfo: nil, repeats: true)
-    }
-    
-    @objc func updateTimer() {
-        // Increment the elapsed time
-        secondsElapsed += 1
-        // Update the timer label
-        updateTimerLabel()
-    }
-    
-    public func updateTimerLabel() {
-        if giveTimerUpdateToUI {
-            let hours = secondsElapsed / 3600
-            let minutes = (secondsElapsed / 60) % 60
-            let seconds = secondsElapsed % 60
-            if hours > 0 {
-                self.updateCallTimer(String(format: "%0.2d:%0.2d:%0.2d", hours, minutes, seconds))
-            } else {
-                self.updateCallTimer(String(format: "%02d:%02d", minutes, seconds))
-            }
-        }
-    }
-    
-    ///Ringing setups
-    public func startPlayingRingingSoundRepeatedly() {
-        stopPlayingRingingSound()
-        playRingingSound() // Play immediately
-        ringingTimer = Timer.scheduledTimer(withTimeInterval: 3.0, repeats: true) { [weak self] _ in
-            guard let self = self else { return }
-            self.playRingingSound()
-        }
-    }
-    
-    public func playRingingSound() {
-        guard let soundURL = Bundle.main.url(forResource: "ringing", withExtension: "aac") else {
-            print("Failed to find ringing.wav in the bundle")
-            return
-        }
-        do {
-            // Initialize AVAudioPlayer with the sound URL
-            self.audioPlayer = try AVAudioPlayer(contentsOf: soundURL)
-            self.audioPlayer?.numberOfLoops = -1 // Loop indefinitely
-            self.audioPlayer?.prepareToPlay()
-            self.audioPlayer?.play()
-        } catch {
-            print("Error initializing AVAudioPlayer: \(error)")
-        }
-    }
-    
-    // Stop the timer when it's no longer needed, e.g., when the call ends
-    public func stopTimer(fromOffline: Bool = false) {
-        delegate?.daWebRTC(self, callEnded: true)
-        if self.timer != nil {
-            self.timer?.invalidate()
-            self.timer = nil
-        }
-        self.stopPlayingRingingSound()
-        self.isAudioMuted = false
-        if !self.isHangOut {
-            self.hangOut()
-        }
-    }
-    
-    public func startSelfTimer() {
-        stopSelfTimer()
-        selfTimer = Timer.scheduledTimer(timeInterval: 90, target: self, selector: #selector(self.handleCallEndTimer(_:)), userInfo: nil, repeats: false)
-    }
-    
-    @objc func handleCallEndTimer(_ timer: Timer) {
-        secondsElapsed = 0
-        selfEndTimerObserver(true)
-    }
-
 }
