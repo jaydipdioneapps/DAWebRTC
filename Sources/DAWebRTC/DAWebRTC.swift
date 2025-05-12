@@ -467,7 +467,7 @@ public class DAWebRTC: NSObject {
         let timer = Timer.scheduledTimer(withTimeInterval: 30.0, repeats: false) { [weak self] _ in
             guard let self = self else { return }
             if !isSelfUser {
-                delegate?.daWebRTC(self, didDisconnectedUser: self.channelName ?? "", userId: userId, duration: secondsElapsed)
+                delegate?.daWebRTC(self, didDisconnectedUser: self.channelName ?? "", userId: userId, duration: 0)
                 handleParticipantLeave(userId: userId, isLeave: true)
             } else {
                 hangOut()
