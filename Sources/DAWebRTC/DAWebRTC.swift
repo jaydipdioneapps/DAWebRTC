@@ -691,19 +691,24 @@ public class DAWebRTC: NSObject {
         }
     }
     
-    public func switchLocalToRemoteVideoView(localView: RTCMTLVideoView, remoteView: RTCMTLVideoView, userId: String) {
+    public func switchLocalToRemoteVideoView(localView: UIView, remoteView: UIView, userId: String) {
+        
+        let localVideoView = convertViewToRTCMTLVideoView(view: localView)
+        
+        let remoteVideoView = convertViewToRTCMTLVideoView(view: remoteView)
+        
         guard let remoteTracks = remoteVideoTracks[userId] else {
             return
         }
         
         let remoteVideoTrack = remoteTracks // Assuming one remote track per user
         
-        localVideoTrack?.remove(localView)
-        remoteVideoTrack.add(localView)
+        localVideoTrack?.remove(localVideoView)
+        remoteVideoTrack.add(localVideoView)
         
         // Show local video in smaller remote view
-        remoteVideoTrack.remove(remoteView)
-        localVideoTrack?.add(remoteView)
+        remoteVideoTrack.remove(remoteVideoView)
+        localVideoTrack?.add(remoteVideoView)
     }
     
     public func addLocalVideoTrack(view: UIView){
