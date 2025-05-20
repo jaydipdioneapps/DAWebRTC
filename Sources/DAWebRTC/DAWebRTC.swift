@@ -13,10 +13,10 @@ public class DAWebRTC: NSObject {
     var peerConnectionFactory: RTCPeerConnectionFactory!
     var iceServers: [RTCIceServer] = []
     public var peerConnections: [String: RTCPeerConnection] = [:]
-    var sdpConnection: [String: RTCSessionDescription] = [:]
+    public var sdpConnection: [String: RTCSessionDescription] = [:]
     public var localVideoTrack: RTCVideoTrack?
     public var localAudioTrack: RTCAudioTrack?
-    var streamId = "stream0"
+    public var streamId = "stream0"
     public var capturer: RTCCameraVideoCapturer?
     
     public var callInitiateType: CallInitiateType = .outgoing
@@ -30,8 +30,8 @@ public class DAWebRTC: NSObject {
     public var isHangOut = false
     public var arrIcCandidate: [ICECandidateShare] = []
     public var handlePendingHandleOffer: [String] = []
-    var remoteDescriptionSet: Set<String> = []
-    var pendingCandidates: [String: [RTCIceCandidate]] = [:]
+    public var remoteDescriptionSet: Set<String> = []
+    public var pendingCandidates: [String: [RTCIceCandidate]] = [:]
     
     public var setRemoteVideoView: ((_ remoteVideoTrack: RTCVideoTrack) -> Void)?
     private var disconnectTimers: [String: Timer] = [:]
@@ -691,28 +691,69 @@ extension DAWebRTC: RTCPeerConnectionDelegate {
     
     public func peerConnection(_ peerConnection: RTCPeerConnection, didAdd stream: RTCMediaStream) {
         
-        guard let userId = self.peerConnections.first(where: { $0.value == peerConnection })?.key else { return }
-        var isConnectedSuccess = false
-        if let videoTrack = stream.videoTracks.first {
-            self.remoteVideoTracks[stream.streamId] = videoTrack
-            self.setupRemoteVideoView(videoTrack)
-            isConnectedSuccess = true
-        } else {
-            if self.callType == CallType.video {
-                self.restartICECandidates()
+//        guard let userId = self.peerConnections.first(where: { $0.value == peerConnection })?.key else { return }
+//        var isConnectedSuccess = false
+//        if let videoTrack = stream.videoTracks.first {
+//            self.remoteVideoTracks[stream.streamId] = videoTrack
+//            self.setupRemoteVideoView(videoTrack)
+//            isConnectedSuccess = true
+//        } else {
+//            if self.callType == CallType.video {
+//                self.restartICECandidates()
+//            }
+//        }
+//        if stream.audioTracks.first != nil {
+//            isConnectedSuccess = true
+//        } else {
+//            if self.callType == CallType.audio {
+//                self.restartICECandidates()
+//            }
+//        }
+//        if isConnectedSuccess {
+//            self.sendICECandidate(userId: userId)
+//            if userId != streamId {
+//                delegate?.daWebRTC(self, updateUserCallStatus: channelName ?? "", userId: userId, joinedStatus: true, isActive: true)
+//            }
+//        }
+        
+        DispatchQueue.global(qos: .userInitiated).async {
+            guard let userId = self.peerConnections.first(where: { $0.value == peerConnection })?.key else { return }
+
+            var isConnectedSuccess = false
+            let videoTrack = stream.videoTracks.first
+            let audioTrack = stream.audioTracks.first
+
+            // Set internal state (thread safe if needed)
+            if let videoTrack = videoTrack {
+                self.remoteVideoTracks[stream.streamId] = videoTrack
+                isConnectedSuccess = true
             }
-        }
-        if stream.audioTracks.first != nil {
-            isConnectedSuccess = true
-        } else {
-            if self.callType == CallType.audio {
-                self.restartICECandidates()
+
+            if audioTrack != nil {
+                isConnectedSuccess = true
             }
-        }
-        if isConnectedSuccess {
-            self.sendICECandidate(userId: userId)
-            if userId != streamId {
-                delegate?.daWebRTC(self, updateUserCallStatus: channelName ?? "", userId: userId, joinedStatus: true, isActive: true)
+
+            DispatchQueue.main.async {
+                if let videoTrack = videoTrack {
+                    self.setupRemoteVideoView(videoTrack)
+                    debugPrint("WEBRTC DELEGATE: Remote video track added for user \(userId)")
+                }
+
+                if self.type == .video && videoTrack == nil {
+                    self.restartICECandidates()
+                }
+
+                if self.type == .audio && audioTrack == nil {
+                    self.restartICECandidates()
+                }
+
+                if isConnectedSuccess {
+                    self.sendICECandidate(userId: userId)
+                    if userId != streamId {
+                        delegate?.daWebRTC(self, updateUserCallStatus: channelName ?? "", userId: userId, joinedStatus: true, isActive: true)
+                    }
+                }
+                debugPrint("WEBRTC DELEGATE: did add stream for user \(userId)")
             }
         }
     }
