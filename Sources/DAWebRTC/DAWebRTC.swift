@@ -749,8 +749,8 @@ extension DAWebRTC: RTCPeerConnectionDelegate {
 
                 if isConnectedSuccess {
                     self.sendICECandidate(userId: userId)
-                    if userId != streamId {
-                        delegate?.daWebRTC(self, updateUserCallStatus: channelName ?? "", userId: userId, joinedStatus: true, isActive: true)
+                    if userId != self.streamId {
+                        self.delegate?.daWebRTC(self, updateUserCallStatus: self.channelName ?? "", userId: userId, joinedStatus: true, isActive: true)
                     }
                 }
                 debugPrint("WEBRTC DELEGATE: did add stream for user \(userId)")
