@@ -423,17 +423,18 @@ public class DAWebRTC: NSObject {
         delegate?.daWebRTC(self, sendOfferFromSDP: self.channelName ?? "", sdp: sdp.sdp, recieverId: [userId].joined(separator: ","))
     }
     
-    public func handleIncomingOffer(_ offer: RTCSessionDescription, from userId: String) {
+    public func handleIncomingOffer(_ sdp: String, from userId: String) {
         if callType == .audio && self.localAudioTrack == nil {
             self.handlePendingHandleOffer.append(userId)
         } else if callType == .video && self.localVideoTrack == nil {
             self.handlePendingHandleOffer.append(userId)
         } else {
+            let incomingOffer = RTCSessionDescription(type: .offer, sdp: sdp)
             if let peerConnection = peerConnections[userId] {
-                setRemoteDescriptionForhandleIncomingOffer(offer, peerConnection: peerConnection, userId: userId)
+                setRemoteDescriptionForhandleIncomingOffer(incomingOffer, peerConnection: peerConnection, userId: userId)
             } else {
                 guard let peerConnection = createPeerConnection(for: userId, type: callType) else { return }
-                setRemoteDescriptionForhandleIncomingOffer(offer, peerConnection: peerConnection, userId: userId)
+                setRemoteDescriptionForhandleIncomingOffer(incomingOffer, peerConnection: peerConnection, userId: userId)
             }
         }
     }
