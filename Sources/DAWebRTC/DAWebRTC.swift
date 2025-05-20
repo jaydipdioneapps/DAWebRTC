@@ -94,10 +94,8 @@ public class DAWebRTC: NSObject {
         return peerConnection
     }
     
-    //MARK: - Setup local stream
-    public func setupLocalStream(view: UIView, type: CallType, isNeedToAddPeerConnection: Bool = false, user: String = "", completion: @escaping (Bool) -> Void) {
-        
-        // Convert UIView to RTCMTLVideoView
+    // Convert UIView to RTCMTLVideoView
+    public func convertViewToRTCMTLVideoView(view: UIView) -> RTCMTLVideoView {
         let videoView = RTCMTLVideoView(frame: view.bounds)
         videoView.translatesAutoresizingMaskIntoConstraints = false
         videoView.videoContentMode = .scaleAspectFill
@@ -110,7 +108,28 @@ public class DAWebRTC: NSObject {
             videoView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             videoView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
         ])
+        
+        return videoView
+    }
+    
+    //MARK: - Setup local stream
+    public func setupLocalStream(view: UIView, type: CallType, isNeedToAddPeerConnection: Bool = false, user: String = "", completion: @escaping (Bool) -> Void) {
+        
+//        
+//        let videoView = RTCMTLVideoView(frame: view.bounds)
+//        videoView.translatesAutoresizingMaskIntoConstraints = false
+//        videoView.videoContentMode = .scaleAspectFill
+//        
+//        view.addSubview(videoView)
+//        
+//        NSLayoutConstraint.activate([
+//            videoView.topAnchor.constraint(equalTo: view.topAnchor),
+//            videoView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+//            videoView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+//            videoView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
+//        ])
 
+        let videoView = convertViewToRTCMTLVideoView(view: view)
         
         if type == .audio {
             self.localAudioTrack = self.peerConnectionFactory.audioTrack(withTrackId: "audio0")
@@ -701,6 +720,9 @@ public class DAWebRTC: NSObject {
         localVideoTrack?.add(remoteView)
     }
     
+    public func addLocalVideoTrack(view: UIView){
+        
+    }
 }
 
 //MARK: - RTCPeerConnectionDelegate delegete method
