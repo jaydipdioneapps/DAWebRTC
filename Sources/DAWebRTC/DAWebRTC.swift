@@ -38,6 +38,8 @@ public class DAWebRTC: NSObject {
     public var remoteVideoViews: [String: RTCMTLVideoView] = [:]
     public var remoteVideoTracks: [String: RTCVideoTrack] = [:]
     
+    public var localVideoView: RTCMTLVideoView!
+    
     public init(stunServer: String, turnServer: String, username: String, password: String, streamId: String) {
         super.init()
         setupPeerConnectionFactory()
