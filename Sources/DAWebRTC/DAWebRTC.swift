@@ -37,9 +37,7 @@ public class DAWebRTC: NSObject {
     private var disconnectTimers: [String: Timer] = [:]
     public var remoteVideoViews: [String: RTCMTLVideoView] = [:]
     public var remoteVideoTracks: [String: RTCVideoTrack] = [:]
-    
-    public var localVideoView: RTCMTLVideoView!
-    
+        
     public init(stunServer: String, turnServer: String, username: String, password: String, streamId: String) {
         super.init()
         setupPeerConnectionFactory()
@@ -97,7 +95,23 @@ public class DAWebRTC: NSObject {
     }
     
     //MARK: - Setup local stream
-    public func setupLocalStream(view: RTCMTLVideoView, type: CallType, isNeedToAddPeerConnection: Bool = false, user: String = "", completion: @escaping (Bool) -> Void) {
+    public func setupLocalStream(view: UIView, type: CallType, isNeedToAddPeerConnection: Bool = false, user: String = "", completion: @escaping (Bool) -> Void) {
+        
+        // Convert UIView to RTCMTLVideoView
+        let videoView = RTCMTLVideoView(frame: view.bounds)
+        videoView.translatesAutoresizingMaskIntoConstraints = false
+        videoView.videoContentMode = .scaleAspectFill
+        
+        view.addSubview(videoView)
+        
+        NSLayoutConstraint.activate([
+            videoView.topAnchor.constraint(equalTo: view.topAnchor),
+            videoView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            videoView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            videoView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
+        ])
+
+        
         if type == .audio {
             self.localAudioTrack = self.peerConnectionFactory.audioTrack(withTrackId: "audio0")
             completion(true)
@@ -130,7 +144,8 @@ public class DAWebRTC: NSObject {
                             peerConnection.add(track, streamIds: [self.streamId])
                         }
                     }
-                    self.localVideoTrack?.add(view)
+                   // self.localVideoTrack?.add(view)
+                    self.localVideoTrack?.add(videoView)
                     completion(true)
                 }
             }
