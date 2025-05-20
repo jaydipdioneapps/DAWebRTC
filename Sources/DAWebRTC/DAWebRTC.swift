@@ -115,20 +115,6 @@ public class DAWebRTC: NSObject {
     //MARK: - Setup local stream
     public func setupLocalStream(view: UIView, type: CallType, isNeedToAddPeerConnection: Bool = false, user: String = "", completion: @escaping (Bool) -> Void) {
         
-//        
-//        let videoView = RTCMTLVideoView(frame: view.bounds)
-//        videoView.translatesAutoresizingMaskIntoConstraints = false
-//        videoView.videoContentMode = .scaleAspectFill
-//        
-//        view.addSubview(videoView)
-//        
-//        NSLayoutConstraint.activate([
-//            videoView.topAnchor.constraint(equalTo: view.topAnchor),
-//            videoView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-//            videoView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-//            videoView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
-//        ])
-
         let videoView = convertViewToRTCMTLVideoView(view: view)
         
         if type == .audio {
@@ -721,7 +707,13 @@ public class DAWebRTC: NSObject {
     }
     
     public func addLocalVideoTrack(view: UIView){
-        
+        let videoView = convertViewToRTCMTLVideoView(view: view)
+        localVideoTrack?.add(videoView)
+    }
+    
+    public func addRemoteVideoTrack(view: UIView, userId: String){
+        let videoView = convertViewToRTCMTLVideoView(view: view)
+        remoteVideoTracks[userId]?.add(videoView)
     }
 }
 
