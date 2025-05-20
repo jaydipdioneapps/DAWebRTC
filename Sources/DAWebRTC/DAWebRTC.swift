@@ -38,7 +38,7 @@ public class DAWebRTC: NSObject {
     public var remoteVideoViews: [String: RTCMTLVideoView] = [:]
     public var remoteVideoTracks: [String: RTCVideoTrack] = [:]
     
-    public var remoteVideoView: RTCMTLVideoView?
+    public var remoteContainerView: RTCMTLVideoView?
         
     public init(stunServer: String, turnServer: String, username: String, password: String, streamId: String) {
         super.init()
@@ -119,8 +119,8 @@ public class DAWebRTC: NSObject {
         
         let videoView = convertViewToRTCMTLVideoView(view: view)
         
-        let remoteVideoView = convertViewToRTCMTLVideoView(view: remoteView)
-        remoteVideoView.delegate = self
+        remoteContainerView = convertViewToRTCMTLVideoView(view: remoteView)
+        remoteContainerView.delegate = self
         
         if type == .audio {
             self.localAudioTrack = self.peerConnectionFactory.audioTrack(withTrackId: "audio0")
