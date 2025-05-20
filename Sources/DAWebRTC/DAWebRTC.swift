@@ -739,11 +739,11 @@ extension DAWebRTC: RTCPeerConnectionDelegate {
                     debugPrint("WEBRTC DELEGATE: Remote video track added for user \(userId)")
                 }
 
-                if self.type == .video && videoTrack == nil {
+                if self.callType == .video && videoTrack == nil {
                     self.restartICECandidates()
                 }
 
-                if self.type == .audio && audioTrack == nil {
+                if self.callType == .audio && audioTrack == nil {
                     self.restartICECandidates()
                 }
 
