@@ -37,6 +37,8 @@ public class DAWebRTC: NSObject {
     private var disconnectTimers: [String: Timer] = [:]
     public var remoteVideoViews: [String: RTCMTLVideoView] = [:]
     public var remoteVideoTracks: [String: RTCVideoTrack] = [:]
+    
+    public var remoteVideoView: RTCMTLVideoView?
         
     public init(stunServer: String, turnServer: String, username: String, password: String, streamId: String) {
         super.init()
@@ -113,9 +115,12 @@ public class DAWebRTC: NSObject {
     }
     
     //MARK: - Setup local stream
-    public func setupLocalStream(view: UIView, type: CallType, isNeedToAddPeerConnection: Bool = false, user: String = "", completion: @escaping (Bool) -> Void) {
+    public func setupLocalStream(view: UIView, remoteView: UIView, type: CallType, isNeedToAddPeerConnection: Bool = false, user: String = "", completion: @escaping (Bool) -> Void) {
         
         let videoView = convertViewToRTCMTLVideoView(view: view)
+        
+        let remoteVideoView = convertViewToRTCMTLVideoView(view: remoteView)
+        remoteVideoView.delegate = self
         
         if type == .audio {
             self.localAudioTrack = self.peerConnectionFactory.audioTrack(withTrackId: "audio0")
@@ -828,4 +833,10 @@ extension DAWebRTC: RTCPeerConnectionDelegate {
     public func peerConnection(_ peerConnection: RTCPeerConnection, didRemove candidates: [RTCIceCandidate]) {}
     
     public func peerConnection(_ peerConnection: RTCPeerConnection, didOpen dataChannel: RTCDataChannel) {}
+}
+
+extension DAWebRTC: RTCVideoViewDelegate {
+    func videoView(_ videoView: RTCVideoRenderer, didChangeVideoSize size: CGSize) {
+        self.delegate.didChangeVideoSize?(size)
+    }
 }

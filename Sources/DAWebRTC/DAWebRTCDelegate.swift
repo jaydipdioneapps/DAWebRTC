@@ -21,4 +21,5 @@ public protocol DAWebRTCDelegate: AnyObject {
     func daWebRTC(_ manager: DAWebRTC, updateUserCallStatus channelName: String, userId: String, joinedStatus: Bool, isActive: Bool)
     func daWebRTC(_ manager: DAWebRTC, callEnded isCallEnded: Bool)
     func daWebRTC(_ manager: DAWebRTC, handleParticipantIsLeave channelName: String, userId: String, isLeave: Bool)
+    func daWebRTC(_ manager: DAWebRTC, didChangeVideoSize size: CGSize)
 }
