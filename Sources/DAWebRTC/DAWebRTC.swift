@@ -356,18 +356,19 @@ public class DAWebRTC: NSObject {
         }
     }
     
-    public func handleNewICECandidate(from userId: String, candidateData: RTCIceCandidate) {
+    public func handleNewICECandidate(from userId: String, sdp: String, sdpMid: String, sdpMLineIndex: Int) {
+        let rtcCandidate = RTCIceCandidate(sdp: sdp, sdpMLineIndex: Int32(sdpMLineIndex), sdpMid: sdpMid)
         guard let peerConnection = peerConnections[userId] else {
-            pendingCandidates[userId, default: []].append(candidateData)
+            pendingCandidates[userId, default: []].append(rtcCandidate)
             return
         }
         
         if !remoteDescriptionSet.contains(userId) {
-            pendingCandidates[userId, default: []].append(candidateData)
+            pendingCandidates[userId, default: []].append(rtcCandidate)
             return
         }
         
-        applyIceCandidate(candidateData, to: peerConnection, for: userId)
+        applyIceCandidate(rtcCandidate, to: peerConnection, for: userId)
     }
 
     // Should be called after remoteDescription is set
