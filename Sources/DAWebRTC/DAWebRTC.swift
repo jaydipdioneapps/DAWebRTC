@@ -836,7 +836,7 @@ extension DAWebRTC: RTCPeerConnectionDelegate {
 }
 
 extension DAWebRTC: RTCVideoViewDelegate {
-    func videoView(_ videoView: RTCVideoRenderer, didChangeVideoSize size: CGSize) {
-        self.delegate.didChangeVideoSize?(size)
+    public func videoView(_ videoView: RTCVideoRenderer, didChangeVideoSize size: CGSize) {
+        self.delegate.daWebRTC(self, didChangeVideoSize: size)
     }
 }
