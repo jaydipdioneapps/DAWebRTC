@@ -101,7 +101,7 @@ public class DAWebRTC: NSObject {
         let videoView = RTCMTLVideoView(frame: view.bounds)
         videoView.translatesAutoresizingMaskIntoConstraints = false
         videoView.videoContentMode = .scaleAspectFill
-        
+        videoView.delegate = self
         view.addSubview(videoView)
         
         NSLayoutConstraint.activate([
@@ -119,10 +119,10 @@ public class DAWebRTC: NSObject {
         
         let videoView = convertViewToRTCMTLVideoView(view: view)
         
-        remoteContainerView = convertViewToRTCMTLVideoView(view: remoteView)
-        if let remoteView = remoteContainerView {
-            remoteView.delegate = self
-        }
+//        remoteContainerView = convertViewToRTCMTLVideoView(view: remoteView)
+//        if let remoteView = remoteContainerView {
+//            remoteView.delegate = self
+//        }
         
         if type == .audio {
             self.localAudioTrack = self.peerConnectionFactory.audioTrack(withTrackId: "audio0")
