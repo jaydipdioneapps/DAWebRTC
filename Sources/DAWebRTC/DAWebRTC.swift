@@ -115,53 +115,130 @@ public class DAWebRTC: NSObject {
     }
     
     //MARK: - Setup local stream
-    public func setupLocalStream(view: UIView, remoteView: UIView, type: CallType, isNeedToAddPeerConnection: Bool = false, user: String = "", completion: @escaping (Bool) -> Void) {
-        
-        let videoView = convertViewToRTCMTLVideoView(view: view)
-        
-//        remoteContainerView = convertViewToRTCMTLVideoView(view: remoteView)
-//        if let remoteView = remoteContainerView {
-//            remoteView.delegate = self
+//    public func setupLocalStream(view: UIView, remoteView: UIView, type: CallType, isNeedToAddPeerConnection: Bool = false, user: String = "", completion: @escaping (Bool) -> Void) {
+//        
+//        let videoView = convertViewToRTCMTLVideoView(view: view)
+//        
+////        remoteContainerView = convertViewToRTCMTLVideoView(view: remoteView)
+////        if let remoteView = remoteContainerView {
+////            remoteView.delegate = self
+////        }
+//        
+//        if type == .audio {
+//            self.localAudioTrack = self.peerConnectionFactory.audioTrack(withTrackId: "audio0")
+//            completion(true)
+//        } else {
+//            let videoSource = peerConnectionFactory.videoSource()
+//            videoSource.adaptOutputFormat(toWidth: 640, height: 360, fps: 15)
+//            let cameraCapturer = RTCCameraVideoCapturer(delegate: videoSource)
+//            
+//            guard let camera = (RTCCameraVideoCapturer.captureDevices().first {
+//                $0.position == .front
+//            }) else {
+//                return
+//            }
+//            
+//            guard let format = camera.formats.last,
+//                  let fps = format.videoSupportedFrameRateRanges.first?.maxFrameRate else {
+//                completion(false)
+//                return
+//            }
+//            cameraCapturer.startCapture(with: camera, format: format, fps: Int(fps)) { error in
+//                if let error = error {
+//                    debugPrint("Error setting local description: \(error.localizedDescription)")
+//                    completion(false)
+//                } else {
+//                    self.capturer = cameraCapturer
+//                    self.localAudioTrack = self.peerConnectionFactory.audioTrack(withTrackId: "audio0")
+//                    self.localVideoTrack = self.peerConnectionFactory.videoTrack(with: videoSource, trackId: "video0")
+//                    if isNeedToAddPeerConnection {
+//                        if let peerConnection = self.peerConnections[user], let track = self.localVideoTrack {
+//                            peerConnection.add(track, streamIds: [self.streamId])
+//                        }
+//                    }
+//                   // self.localVideoTrack?.add(view)
+//                    self.localVideoTrack?.add(videoView)
+//                    completion(true)
+//                }
+//            }
 //        }
-        
+//    }
+    
+    public func setupLocalStream(view: UIView, remoteView: UIView, type: CallType, isNeedToAddPeerConnection: Bool = false, user: String = "", completion: @escaping (Bool) -> Void) {
+        let videoView = convertViewToRTCMTLVideoView(view: view)
         if type == .audio {
             self.localAudioTrack = self.peerConnectionFactory.audioTrack(withTrackId: "audio0")
             completion(true)
-        } else {
-            let videoSource = peerConnectionFactory.videoSource()
-            videoSource.adaptOutputFormat(toWidth: 640, height: 360, fps: 15)
-            let cameraCapturer = RTCCameraVideoCapturer(delegate: videoSource)
-            
-            guard let camera = (RTCCameraVideoCapturer.captureDevices().first {
-                $0.position == .front
-            }) else {
-                return
-            }
-            
-            guard let format = camera.formats.last,
-                  let fps = format.videoSupportedFrameRateRanges.first?.maxFrameRate else {
+            return
+        }
+        
+        // Video call setup
+        let videoSource = peerConnectionFactory.videoSource()
+        let cameraCapturer = RTCCameraVideoCapturer(delegate: videoSource)
+
+        guard let camera = RTCCameraVideoCapturer.captureDevices().first(where: { $0.position == .front }) else {
+            debugPrint("❌ No front camera found.")
+            completion(false)
+            return
+        }
+
+        guard let best = bestFormat(for: camera) else {
+            debugPrint("❌ No suitable video format found.")
+            completion(false)
+            return
+        }
+
+        let format = best.format
+        let fps = best.fps
+
+        cameraCapturer.startCapture(with: camera, format: format, fps: fps) { error in
+            if let error = error {
+                debugPrint("❌ Failed to start capture: \(error.localizedDescription)")
                 completion(false)
-                return
-            }
-            cameraCapturer.startCapture(with: camera, format: format, fps: Int(fps)) { error in
-                if let error = error {
-                    debugPrint("Error setting local description: \(error.localizedDescription)")
-                    completion(false)
-                } else {
-                    self.capturer = cameraCapturer
-                    self.localAudioTrack = self.peerConnectionFactory.audioTrack(withTrackId: "audio0")
-                    self.localVideoTrack = self.peerConnectionFactory.videoTrack(with: videoSource, trackId: "video0")
-                    if isNeedToAddPeerConnection {
-                        if let peerConnection = self.peerConnections[user], let track = self.localVideoTrack {
-                            peerConnection.add(track, streamIds: [self.streamId])
-                        }
+            } else {
+                self.capturer = cameraCapturer
+                self.localAudioTrack = self.peerConnectionFactory.audioTrack(withTrackId: "audio0")
+                self.localVideoTrack = self.peerConnectionFactory.videoTrack(with: videoSource, trackId: "video0")
+
+                if isNeedToAddPeerConnection {
+                    if let peerConnection = self.peerConnections[user], let track = self.localVideoTrack {
+                        peerConnection.add(track, streamIds: [XmppHelper.shared.username ?? "stream0"])
                     }
-                   // self.localVideoTrack?.add(view)
-                    self.localVideoTrack?.add(videoView)
-                    completion(true)
+                }
+
+                self.localVideoTrack?.add(videoView)
+                completion(true)
+            }
+        }
+    }
+    
+    /// Selects the best format for 1280x720 resolution at 30fps or the closest possible.
+    private func bestFormat(for device: AVCaptureDevice, targetWidth: Int32 = 1280, targetHeight: Int32 = 720, targetFps: Float64 = 30) -> (format: AVCaptureDevice.Format, fps: Int)? {
+        
+        var selectedFormat: AVCaptureDevice.Format?
+        var selectedFps: Float64 = 0
+
+        for format in device.formats {
+            let description = format.formatDescription
+            let dimensions = CMVideoFormatDescriptionGetDimensions(description)
+
+            // Filter for 720p or better
+            guard dimensions.width >= targetWidth, dimensions.height >= targetHeight else { continue }
+
+            for range in format.videoSupportedFrameRateRanges {
+                if range.maxFrameRate >= targetFps {
+                    if selectedFormat == nil || dimensions.width > CMVideoFormatDescriptionGetDimensions(selectedFormat!.formatDescription).width {
+                        selectedFormat = format
+                        selectedFps = min(range.maxFrameRate, targetFps)
+                    }
                 }
             }
         }
+
+        if let format = selectedFormat {
+            return (format, Int(selectedFps))
+        }
+        return nil
     }
     
     //MARK: -  Create group call offer
