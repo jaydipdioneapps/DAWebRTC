@@ -101,7 +101,7 @@ public class DAWebRTC: NSObject {
         let videoView = RTCMTLVideoView(frame: view.bounds)
         videoView.translatesAutoresizingMaskIntoConstraints = false
         videoView.videoContentMode = .scaleAspectFill
-        videoView.delegate = self
+        //videoView.delegate = self
         view.addSubview(videoView)
         
         NSLayoutConstraint.activate([
@@ -166,6 +166,12 @@ public class DAWebRTC: NSObject {
     
     public func setupLocalStream(view: UIView, remoteView: UIView, type: CallType, isNeedToAddPeerConnection: Bool = false, user: String = "", completion: @escaping (Bool) -> Void) {
         let videoView = convertViewToRTCMTLVideoView(view: view)
+        
+        remoteContainerView = convertViewToRTCMTLVideoView(view: remoteView)
+        if let remoteView = remoteContainerView {
+            remoteView.delegate = self
+        }
+        
         if type == .audio {
             self.localAudioTrack = self.peerConnectionFactory.audioTrack(withTrackId: "audio0")
             completion(true)
