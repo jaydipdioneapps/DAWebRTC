@@ -202,7 +202,7 @@ public class DAWebRTC: NSObject {
 
                 if isNeedToAddPeerConnection {
                     if let peerConnection = self.peerConnections[user], let track = self.localVideoTrack {
-                        peerConnection.add(track, streamIds: [XmppHelper.shared.username ?? "stream0"])
+                        peerConnection.add(track, streamIds: [self.streamId])
                     }
                 }
 
