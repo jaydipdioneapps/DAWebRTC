@@ -168,7 +168,7 @@ public class DAWebRTC: NSObject {
         let videoView = convertViewToRTCMTLVideoView(view: view)
         
         remoteContainerView = convertViewToRTCMTLVideoView(view: remoteView)
-        remoteContainerView.delegate = self
+        remoteContainerView?.delegate = self
         
         if type == .audio {
             self.localAudioTrack = self.peerConnectionFactory.audioTrack(withTrackId: "audio0")
