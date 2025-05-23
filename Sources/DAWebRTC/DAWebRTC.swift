@@ -858,6 +858,7 @@ extension DAWebRTC: RTCPeerConnectionDelegate {
 
             // Set internal state (thread safe if needed)
             if let videoTrack = videoTrack {
+                self.handleRemoteTrack()
                 self.remoteVideoTracks[stream.streamId] = videoTrack
                 isConnectedSuccess = true
             }
@@ -869,7 +870,6 @@ extension DAWebRTC: RTCPeerConnectionDelegate {
             DispatchQueue.main.async {
                 if let videoTrack = videoTrack {
                     self.setupRemoteVideoView(videoTrack)
-                    self.handleRemoteTrack()
                     debugPrint("WEBRTC DELEGATE: Remote video track added for user \(userId)")
                 }
 
