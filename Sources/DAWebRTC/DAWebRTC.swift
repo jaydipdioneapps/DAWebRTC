@@ -39,7 +39,7 @@ public class DAWebRTC: NSObject {
     public var remoteVideoTracks: [String: RTCVideoTrack] = [:]
     
     public var remoteContainerView: RTCMTLVideoView?
-    public var remoteViewUI: UIView? = nil
+    public var remoteViewUI: UIView?
         
     public init(stunServer: String, turnServer: String, username: String, password: String, streamId: String) {
         super.init()
@@ -168,9 +168,8 @@ public class DAWebRTC: NSObject {
     public func setupLocalStream(view: UIView, remoteView: UIView, type: CallType, isNeedToAddPeerConnection: Bool = false, user: String = "", completion: @escaping (Bool) -> Void) {
         let videoView = convertViewToRTCMTLVideoView(view: view)
         
-//        remoteContainerView = convertViewToRTCMTLVideoView(view: remoteView)
-//        remoteContainerView?.delegate = self
-        remoteViewUI = remoteView
+        remoteContainerView = convertViewToRTCMTLVideoView(view: remoteView)
+        remoteContainerView?.delegate = self
         
         if type == .audio {
             self.localAudioTrack = self.peerConnectionFactory.audioTrack(withTrackId: "audio0")
@@ -602,8 +601,8 @@ public class DAWebRTC: NSObject {
         self.setRemoteVideoView?(remoteVideoTrack)
     }
     
-    func handleRemoteTrack() {
-        remoteContainerView = convertViewToRTCMTLVideoView(view: remoteViewUI!)
+    func handleRemoteTrack(_ track: RTCVideoTrack, remoteView: UIView) {
+        remoteContainerView = convertViewToRTCMTLVideoView(view: remoteView)
         remoteContainerView?.delegate = self
     }
     
@@ -858,7 +857,6 @@ extension DAWebRTC: RTCPeerConnectionDelegate {
 
             // Set internal state (thread safe if needed)
             if let videoTrack = videoTrack {
-                self.handleRemoteTrack()
                 self.remoteVideoTracks[stream.streamId] = videoTrack
                 isConnectedSuccess = true
             }
