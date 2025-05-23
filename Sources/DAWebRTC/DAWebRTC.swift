@@ -603,7 +603,7 @@ public class DAWebRTC: NSObject {
     }
     
     func handleRemoteTrack() {
-        remoteContainerView = convertViewToRTCMTLVideoView(view: remoteViewUI)
+        remoteContainerView = convertViewToRTCMTLVideoView(view: remoteViewUI!)
         remoteContainerView?.delegate = self
     }
     
