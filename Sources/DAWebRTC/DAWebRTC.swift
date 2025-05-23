@@ -39,7 +39,7 @@ public class DAWebRTC: NSObject {
     public var remoteVideoTracks: [String: RTCVideoTrack] = [:]
     
     public var remoteContainerView: RTCMTLVideoView?
-    public var remoteViewUI: UIView?
+    public var remoteViewUI: UIView? = nil
         
     public init(stunServer: String, turnServer: String, username: String, password: String, streamId: String) {
         super.init()
