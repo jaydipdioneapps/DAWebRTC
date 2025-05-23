@@ -167,8 +167,8 @@ public class DAWebRTC: NSObject {
     public func setupLocalStream(view: UIView, remoteView: UIView, type: CallType, isNeedToAddPeerConnection: Bool = false, user: String = "", completion: @escaping (Bool) -> Void) {
         let videoView = convertViewToRTCMTLVideoView(view: view)
         
-        remoteContainerView = convertViewToRTCMTLVideoView(view: remoteView)
-        remoteContainerView?.delegate = self
+//        remoteContainerView = convertViewToRTCMTLVideoView(view: remoteView)
+//        remoteContainerView?.delegate = self
         
         if type == .audio {
             self.localAudioTrack = self.peerConnectionFactory.audioTrack(withTrackId: "audio0")
@@ -863,6 +863,7 @@ extension DAWebRTC: RTCPeerConnectionDelegate {
                 if let videoTrack = videoTrack {
                     self.setupRemoteVideoView(videoTrack)
                     debugPrint("WEBRTC DELEGATE: Remote video track added for user \(userId)")
+                    videoTrack.delegate = self
                 }
 
                 if self.callType == .video && videoTrack == nil {
