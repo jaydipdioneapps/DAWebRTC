@@ -99,20 +99,22 @@ public class DAWebRTC: NSObject {
     
     // Convert UIView to RTCMTLVideoView
     public func convertViewToRTCMTLVideoView(view: UIView) -> RTCMTLVideoView {
-        let videoView = RTCMTLVideoView(frame: view.bounds)
-        videoView.translatesAutoresizingMaskIntoConstraints = false
-        videoView.videoContentMode = .scaleAspectFill
-        //videoView.delegate = self
-        view.addSubview(videoView)
-        
-        NSLayoutConstraint.activate([
-            videoView.topAnchor.constraint(equalTo: view.topAnchor),
-            videoView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            videoView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            videoView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
-        ])
-        
-        return videoView
+        DispatchQueue.main.async {
+            let videoView = RTCMTLVideoView(frame: view.bounds)
+            videoView.translatesAutoresizingMaskIntoConstraints = false
+            videoView.videoContentMode = .scaleAspectFill
+            //videoView.delegate = self
+            view.addSubview(videoView)
+            
+            NSLayoutConstraint.activate([
+                videoView.topAnchor.constraint(equalTo: view.topAnchor),
+                videoView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+                videoView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+                videoView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
+            ])
+            
+            return videoView
+        }
     }
     
     //MARK: - Setup local stream
