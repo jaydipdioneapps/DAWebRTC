@@ -844,7 +844,7 @@ public class DAWebRTC: NSObject {
         var videoView = RTCMTLVideoView() // convertViewToRTCMTLVideoView(view: view)
         convertViewToRTCMTLVideoView(view: view) { rtcView in
             videoView = rtcView
-            localVideoTrack?.add(videoView)
+            self.localVideoTrack?.add(videoView)
         }
     }
     
@@ -852,7 +852,7 @@ public class DAWebRTC: NSObject {
         var videoView = RTCMTLVideoView() // convertViewToRTCMTLVideoView(view: view)
         convertViewToRTCMTLVideoView(view: view) { rtcView in
             videoView = rtcView
-            remoteVideoTracks[userId]?.add(videoView)
+            self.remoteVideoTracks[userId]?.add(videoView)
         }
     }
 }
