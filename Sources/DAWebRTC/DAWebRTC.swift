@@ -98,14 +98,32 @@ public class DAWebRTC: NSObject {
     }
     
     // Convert UIView to RTCMTLVideoView
-    public func convertViewToRTCMTLVideoView(view: UIView) -> RTCMTLVideoView {
+//    public func convertViewToRTCMTLVideoView(view: UIView) -> RTCMTLVideoView {
+//        DispatchQueue.main.async {
+//            let videoView = RTCMTLVideoView(frame: view.bounds)
+//            videoView.translatesAutoresizingMaskIntoConstraints = false
+//            videoView.videoContentMode = .scaleAspectFill
+//            //videoView.delegate = self
+//            view.addSubview(videoView)
+//            
+//            NSLayoutConstraint.activate([
+//                videoView.topAnchor.constraint(equalTo: view.topAnchor),
+//                videoView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+//                videoView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+//                videoView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
+//            ])
+//            
+//            return videoView
+//        }
+//    }
+    
+    public func convertViewToRTCMTLVideoView(view: UIView, completion: @escaping (RTCMTLVideoView) -> Void) {
         DispatchQueue.main.async {
             let videoView = RTCMTLVideoView(frame: view.bounds)
             videoView.translatesAutoresizingMaskIntoConstraints = false
             videoView.videoContentMode = .scaleAspectFill
-            //videoView.delegate = self
             view.addSubview(videoView)
-            
+
             NSLayoutConstraint.activate([
                 videoView.topAnchor.constraint(equalTo: view.topAnchor),
                 videoView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
@@ -113,9 +131,10 @@ public class DAWebRTC: NSObject {
                 videoView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
             ])
             
-            return videoView
+            completion(videoView)
         }
     }
+
     
     //MARK: - Setup local stream
 //    public func setupLocalStream(view: UIView, remoteView: UIView, type: CallType, isNeedToAddPeerConnection: Bool = false, user: String = "", completion: @escaping (Bool) -> Void) {
@@ -168,10 +187,17 @@ public class DAWebRTC: NSObject {
 //    }
     
     public func setupLocalStream(view: UIView, remoteView: UIView, type: CallType, isNeedToAddPeerConnection: Bool = false, user: String = "", completion: @escaping (Bool) -> Void) {
-        let videoView = convertViewToRTCMTLVideoView(view: view)
+        let videoView = RTCMTLVideoView() //convertViewToRTCMTLVideoView(view: view)
+        convertViewToRTCMTLVideoView(view: view) { rtcView in
+            videoView = rtcView
+        }
+
         
-        remoteContainerView = convertViewToRTCMTLVideoView(view: remoteView)
-        remoteContainerView?.delegate = self
+       // remoteContainerView = convertViewToRTCMTLVideoView(view: remoteView)
+        convertViewToRTCMTLVideoView(view: remoteView) { rtcView in
+            remoteContainerView = rtcView
+            remoteContainerView?.delegate = self
+        }
         
         if type == .audio {
             self.localAudioTrack = self.peerConnectionFactory.audioTrack(withTrackId: "audio0")
@@ -789,9 +815,16 @@ public class DAWebRTC: NSObject {
     
     public func switchLocalToRemoteVideoView(localView: UIView, remoteView: UIView, userId: String) {
         
-        let localVideoView = convertViewToRTCMTLVideoView(view: localView)
+        let localVideoView = RTCMTLVideoView() //convertViewToRTCMTLVideoView(view: localView)
+        convertViewToRTCMTLVideoView(view: localView) { rtcView in
+            localVideoView = rtcView
+        }
+
         
-        let remoteVideoView = convertViewToRTCMTLVideoView(view: remoteView)
+        let remoteVideoView = RTCMTLVideoView()// convertViewToRTCMTLVideoView(view: remoteView)
+        convertViewToRTCMTLVideoView(view: remoteView) { rtcView in
+            remoteVideoView = rtcView
+        }
         
         guard let remoteTracks = remoteVideoTracks[userId] else {
             return
@@ -808,13 +841,19 @@ public class DAWebRTC: NSObject {
     }
     
     public func addLocalVideoTrack(view: UIView){
-        let videoView = convertViewToRTCMTLVideoView(view: view)
-        localVideoTrack?.add(videoView)
+        let videoView = RTCMTLVideoView() // convertViewToRTCMTLVideoView(view: view)
+        convertViewToRTCMTLVideoView(view: view) { rtcView in
+            videoView = rtcView
+            localVideoTrack?.add(videoView)
+        }
     }
     
     public func addRemoteVideoTrack(view: UIView, userId: String){
-        let videoView = convertViewToRTCMTLVideoView(view: view)
-        remoteVideoTracks[userId]?.add(videoView)
+        let videoView = RTCMTLVideoView() // convertViewToRTCMTLVideoView(view: view)
+        convertViewToRTCMTLVideoView(view: view) { rtcView in
+            videoView = rtcView
+            remoteVideoTracks[userId]?.add(videoView)
+        }
     }
 }
 
