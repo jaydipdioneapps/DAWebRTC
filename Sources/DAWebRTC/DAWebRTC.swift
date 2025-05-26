@@ -821,18 +821,14 @@ public class DAWebRTC: NSObject {
     }
     
     public func addLocalVideoTrack(view: UIView){
-        var videoView = RTCMTLVideoView()
         convertViewToRTCMTLVideoView(view: view) { rtcView in
-            videoView = rtcView
-            self.localVideoTrack?.add(videoView)
+            self.localVideoTrack?.add(rtcView)
         }
     }
     
     public func addRemoteVideoTrack(view: UIView, userId: String){
-        var videoView = RTCMTLVideoView()
         convertViewToRTCMTLVideoView(view: view) { rtcView in
-            videoView = rtcView
-            self.remoteVideoTracks[userId]?.add(videoView)
+            self.remoteVideoTracks[userId]?.add(rtcView)
         }
     }
     
