@@ -861,6 +861,7 @@ public class DAWebRTC: NSObject {
     public func removeCurrentVideoTrck(videoView: UIView){
         if let track = self.currentVideoTrack {
             convertViewToRTCMTLVideoView(view: videoView) { rtcView in
+                rtcView.renderFrame(nil)
                 track.remove(rtcView)
                 self.currentVideoTrack = nil
             }
