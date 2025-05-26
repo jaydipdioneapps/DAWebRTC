@@ -124,6 +124,7 @@ public class DAWebRTC: NSObject {
             let videoView = RTCMTLVideoView(frame: view.bounds)
             videoView.translatesAutoresizingMaskIntoConstraints = false
             videoView.videoContentMode = .scaleAspectFill
+            videoView.delegate = self
             view.addSubview(videoView)
 
             NSLayoutConstraint.activate([
