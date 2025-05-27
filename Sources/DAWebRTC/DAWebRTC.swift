@@ -224,8 +224,11 @@ public class DAWebRTC: NSObject {
                         peerConnection.add(track, streamIds: [self.streamId])
                     }
                 }
-
-                self.localVideoTrack?.add(self?.localVideoContainerView)
+                guard let localView = self.localVideoContainerView else {
+                    completion(false)
+                    return
+                }
+                self.localVideoTrack?.add(localView)
                 completion(true)
             }
         }
