@@ -739,33 +739,6 @@ public class DAWebRTC: NSObject {
         }
     }
     
-//    public func switchLocalToRemoteVideoView(localView: UIView, remoteView: UIView, userId: String) {
-//        
-//        var localVideoView = RTCMTLVideoView()
-//        convertViewToRTCMTLVideoView(view: localView) { rtcView in
-//            localVideoView = rtcView
-//        }
-//
-//        
-//        var remoteVideoView = RTCMTLVideoView()
-//        convertViewToRTCMTLVideoView(view: remoteView) { rtcView in
-//            remoteVideoView = rtcView
-//        }
-//        
-//        guard let remoteTracks = remoteVideoTracks[userId] else {
-//            return
-//        }
-//        
-//        let remoteVideoTrack = remoteTracks
-//        
-//        localVideoTrack?.remove(localVideoView)
-//        remoteVideoTrack.add(localVideoView)
-//        
-//        // Show local video in smaller remote view
-//        remoteVideoTrack.remove(remoteVideoView)
-//        localVideoTrack?.add(remoteVideoView)
-//    }
-    
     public func switchLocalToRemoteVideoView(localView: UIView, remoteView: UIView, userId: String) {
         // Remove current attachments if needed
         convertViewToRTCMTLVideoView(view: localView) { rtcLocalView in
@@ -858,6 +831,7 @@ extension DAWebRTC: RTCPeerConnectionDelegate {
     
     public func peerConnection(_ peerConnection: RTCPeerConnection, didChange newState: RTCIceConnectionState) {
         guard let userId = self.peerConnections.first(where: { $0.value == peerConnection })?.key else { return }
+        debugPrint("RTCIceConnectionState : [ICE] Successfully added ICE candidate for \(newState)")
         switch newState {
         case .disconnected:
             self.handleNetworkDisconnection(userId: userId)
