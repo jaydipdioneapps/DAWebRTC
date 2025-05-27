@@ -72,7 +72,9 @@ public class DAWebRTC: NSObject {
         
         let configuration = RTCConfiguration()
         configuration.iceServers = iceServers
+        configuration.iceTransportPolicy = .relay
         configuration.sdpSemantics = .unifiedPlan
+        configuration.continualGatheringPolicy = .gatherContinually
         
         let constraints = RTCMediaConstraints(mandatoryConstraints: [
             "OfferToReceiveAudio": "true",
