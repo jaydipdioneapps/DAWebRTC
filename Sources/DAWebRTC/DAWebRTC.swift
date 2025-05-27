@@ -177,7 +177,7 @@ public class DAWebRTC: NSObject {
     public func setupLocalStream(view: UIView, remoteView: UIView, type: CallType, isNeedToAddPeerConnection: Bool = false, user: String = "", completion: @escaping (Bool) -> Void) {
         
         convertViewToRTCMTLVideoView(view: view) { rtcView in
-            localVideoContainerView = rtcView
+            self.localVideoContainerView = rtcView
         }
 
         convertViewToRTCMTLVideoView(view: remoteView) { rtcView in
@@ -225,7 +225,7 @@ public class DAWebRTC: NSObject {
                     }
                 }
 
-                self.localVideoTrack?.add(localVideoContainerView)
+                self.localVideoTrack?.add(self.localVideoContainerView)
                 completion(true)
             }
         }
