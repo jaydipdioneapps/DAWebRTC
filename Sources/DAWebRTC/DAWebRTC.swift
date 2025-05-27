@@ -741,32 +741,46 @@ public class DAWebRTC: NSObject {
         }
     }
     
+//    public func switchLocalToRemoteVideoView(localView: UIView, remoteView: UIView, userId: String) {
+//        
+//        var localVideoView = RTCMTLVideoView()
+//        convertViewToRTCMTLVideoView(view: localView) { rtcView in
+//            localVideoView = rtcView
+//        }
+//
+//        
+//        var remoteVideoView = RTCMTLVideoView()
+//        convertViewToRTCMTLVideoView(view: remoteView) { rtcView in
+//            remoteVideoView = rtcView
+//        }
+//        
+//        guard let remoteTracks = remoteVideoTracks[userId] else {
+//            return
+//        }
+//        
+//        let remoteVideoTrack = remoteTracks
+//        
+//        localVideoTrack?.remove(localVideoView)
+//        remoteVideoTrack.add(localVideoView)
+//        
+//        // Show local video in smaller remote view
+//        remoteVideoTrack.remove(remoteVideoView)
+//        localVideoTrack?.add(remoteVideoView)
+//    }
+    
     public func switchLocalToRemoteVideoView(localView: UIView, remoteView: UIView, userId: String) {
-        
-        var localVideoView = RTCMTLVideoView()
-        convertViewToRTCMTLVideoView(view: localView) { rtcView in
-            localVideoView = rtcView
-        }
-
-        
-        var remoteVideoView = RTCMTLVideoView()
-        convertViewToRTCMTLVideoView(view: remoteView) { rtcView in
-            remoteVideoView = rtcView
+        // Remove current attachments if needed
+        convertViewToRTCMTLVideoView(view: localView) { rtcLocalView in
+            localVideoTrack?.remove(rtcLocalView)
+            remoteVideoTracks[userId]?.add(rtcLocalView)
         }
         
-        guard let remoteTracks = remoteVideoTracks[userId] else {
-            return
+        convertViewToRTCMTLVideoView(view: remoteView) { rtcRemoteView in
+            remoteVideoTracks[userId]?.remove(rtcRemoteView)
+            localVideoTrack?.add(rtcRemoteView)
         }
-        
-        let remoteVideoTrack = remoteTracks
-        
-        localVideoTrack?.remove(localVideoView)
-        remoteVideoTrack.add(localVideoView)
-        
-        // Show local video in smaller remote view
-        remoteVideoTrack.remove(remoteVideoView)
-        localVideoTrack?.add(remoteVideoView)
     }
+
     
     public func addLocalVideoTrack(view: UIView){
         convertViewToRTCMTLVideoView(view: view) { rtcView in
