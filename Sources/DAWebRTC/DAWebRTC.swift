@@ -316,9 +316,9 @@ public class DAWebRTC: NSObject {
                 debugPrint("Error setting local description: \(error.localizedDescription)")
                 return
             }
-            self.createAnswer(for: userId)
             self.remoteDescriptionSet.insert(userId)
             self.flushPendingCandidates(for: userId)
+            self.createAnswer(for: userId)
             self.delegate?.daWebRTC(self, pendingHandleOffer: userId, isInviting: isInviting, sdp: sdp, isRejoin: false, groupId: self.isGroupId)
         }
         if isRejoin {
