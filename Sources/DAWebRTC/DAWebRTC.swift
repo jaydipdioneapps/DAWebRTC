@@ -39,7 +39,7 @@ public class DAWebRTC: NSObject {
     public var remoteVideoTracks: [String: RTCVideoTrack] = [:]
     
     public var remoteContainerView: RTCMTLVideoView?
-    public var localVideoContainerView = RTCMTLVideoView?
+    public var localVideoContainerView: RTCMTLVideoView?
     public var remoteViewUI: UIView?
     
     public var currentVideoTrack: RTCVideoTrack?
