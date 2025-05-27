@@ -321,6 +321,8 @@ public class DAWebRTC: NSObject {
                 return
             }
             self.createAnswer(for: userId)
+            self.remoteDescriptionSet.insert(userId)
+            self.flushPendingCandidates(for: userId)
             self.delegate?.daWebRTC(self, pendingHandleOffer: userId, isInviting: isInviting, sdp: sdp, isRejoin: false, groupId: self.isGroupId)
         }
         if isRejoin {
@@ -353,7 +355,7 @@ public class DAWebRTC: NSObject {
                     return
                 }
                 self?.delegate?.daWebRTC(self!, didCreateAnswer: self?.channelName ?? "", sdp: answer.sdp, recieverId: [userId].joined(separator: ","))
-                self?.addIceCandidate(from: userId)
+                //self?.addIceCandidate(from: userId)
             }
         }
     }
