@@ -225,7 +225,7 @@ public class DAWebRTC: NSObject {
                     }
                 }
 
-                self.localVideoTrack?.add(self.localVideoContainerView)
+                self.localVideoTrack?.add(self?.localVideoContainerView)
                 completion(true)
             }
         }
