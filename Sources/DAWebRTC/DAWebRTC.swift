@@ -771,13 +771,13 @@ public class DAWebRTC: NSObject {
     public func switchLocalToRemoteVideoView(localView: UIView, remoteView: UIView, userId: String) {
         // Remove current attachments if needed
         convertViewToRTCMTLVideoView(view: localView) { rtcLocalView in
-            localVideoTrack?.remove(rtcLocalView)
-            remoteVideoTracks[userId]?.add(rtcLocalView)
+            self.localVideoTrack?.remove(rtcLocalView)
+            self.remoteVideoTracks[userId]?.add(rtcLocalView)
         }
         
         convertViewToRTCMTLVideoView(view: remoteView) { rtcRemoteView in
-            remoteVideoTracks[userId]?.remove(rtcRemoteView)
-            localVideoTrack?.add(rtcRemoteView)
+            self.remoteVideoTracks[userId]?.remove(rtcRemoteView)
+            self.localVideoTrack?.add(rtcRemoteView)
         }
     }
 
