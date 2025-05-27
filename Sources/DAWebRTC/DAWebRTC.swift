@@ -39,7 +39,6 @@ public class DAWebRTC: NSObject {
     public var remoteVideoTracks: [String: RTCVideoTrack] = [:]
     
     public var remoteContainerView: RTCMTLVideoView?
-    public var localVideoContainerView: RTCMTLVideoView?
     public var remoteViewUI: UIView?
     
     public var currentVideoTrack: RTCVideoTrack?
@@ -128,7 +127,6 @@ public class DAWebRTC: NSObject {
     public func setupLocalStream(view: UIView, type: CallType, isNeedToAddPeerConnection: Bool = false, user: String = "", completion: @escaping (Bool) -> Void) {
         
         convertViewToRTCMTLVideoView(view: view) { rtcView in
-            self.localVideoContainerView = rtcView
             
             if type == .audio {
                 self.localAudioTrack = self.peerConnectionFactory.audioTrack(withTrackId: "audio0")
@@ -137,7 +135,7 @@ public class DAWebRTC: NSObject {
             }
             
             // Video call setup
-            let videoSource = peerConnectionFactory.videoSource()
+            let videoSource = self.peerConnectionFactory.videoSource()
             let cameraCapturer = RTCCameraVideoCapturer(delegate: videoSource)
 
             guard let camera = RTCCameraVideoCapturer.captureDevices().first(where: { $0.position == .front }) else {
@@ -146,7 +144,7 @@ public class DAWebRTC: NSObject {
                 return
             }
 
-            guard let best = bestFormat(for: camera) else {
+            guard let best = self.bestFormat(for: camera) else {
                 debugPrint("❌ No suitable video format found.")
                 completion(false)
                 return
@@ -169,11 +167,7 @@ public class DAWebRTC: NSObject {
                             peerConnection.add(track, streamIds: [self.streamId])
                         }
                     }
-                    guard let localView = self.localVideoContainerView else {
-                        completion(false)
-                        return
-                    }
-                    self.localVideoTrack?.add(localView)
+                    self.localVideoTrack?.add(rtcView)
                     completion(true)
                 }
             }
