@@ -123,66 +123,17 @@ public class DAWebRTC: NSObject {
         }
     }
 
-    
-    //MARK: - Setup local stream
-//    public func setupLocalStream(view: UIView, remoteView: UIView, type: CallType, isNeedToAddPeerConnection: Bool = false, user: String = "", completion: @escaping (Bool) -> Void) {
-//        
-//        let videoView = convertViewToRTCMTLVideoView(view: view)
-//        
-////        remoteContainerView = convertViewToRTCMTLVideoView(view: remoteView)
-////        if let remoteView = remoteContainerView {
-////            remoteView.delegate = self
-////        }
-//        
-//        if type == .audio {
-//            self.localAudioTrack = self.peerConnectionFactory.audioTrack(withTrackId: "audio0")
-//            completion(true)
-//        } else {
-//            let videoSource = peerConnectionFactory.videoSource()
-//            videoSource.adaptOutputFormat(toWidth: 640, height: 360, fps: 15)
-//            let cameraCapturer = RTCCameraVideoCapturer(delegate: videoSource)
-//            
-//            guard let camera = (RTCCameraVideoCapturer.captureDevices().first {
-//                $0.position == .front
-//            }) else {
-//                return
-//            }
-//            
-//            guard let format = camera.formats.last,
-//                  let fps = format.videoSupportedFrameRateRanges.first?.maxFrameRate else {
-//                completion(false)
-//                return
-//            }
-//            cameraCapturer.startCapture(with: camera, format: format, fps: Int(fps)) { error in
-//                if let error = error {
-//                    debugPrint("Error setting local description: \(error.localizedDescription)")
-//                    completion(false)
-//                } else {
-//                    self.capturer = cameraCapturer
-//                    self.localAudioTrack = self.peerConnectionFactory.audioTrack(withTrackId: "audio0")
-//                    self.localVideoTrack = self.peerConnectionFactory.videoTrack(with: videoSource, trackId: "video0")
-//                    if isNeedToAddPeerConnection {
-//                        if let peerConnection = self.peerConnections[user], let track = self.localVideoTrack {
-//                            peerConnection.add(track, streamIds: [self.streamId])
-//                        }
-//                    }
-//                   // self.localVideoTrack?.add(view)
-//                    self.localVideoTrack?.add(videoView)
-//                    completion(true)
-//                }
-//            }
-//        }
-//    }
-    
     public func setupLocalStream(view: UIView, remoteView: UIView, type: CallType, isNeedToAddPeerConnection: Bool = false, user: String = "", completion: @escaping (Bool) -> Void) {
         
         convertViewToRTCMTLVideoView(view: view) { rtcView in
             self.localVideoContainerView = rtcView
+            debugPrint("setupLocalStream ------ localVideoContainerView")
         }
 
         convertViewToRTCMTLVideoView(view: remoteView) { rtcView in
             self.remoteContainerView = rtcView
             self.remoteContainerView?.delegate = self
+            debugPrint("setupLocalStream ------ remoteContainerView")
         }
         
         if type == .audio {
@@ -814,7 +765,7 @@ public class DAWebRTC: NSObject {
             return
         }
         
-        let remoteVideoTrack = remoteTracks // Assuming one remote track per user
+        let remoteVideoTrack = remoteTracks
         
         localVideoTrack?.remove(localVideoView)
         remoteVideoTrack.add(localVideoView)
