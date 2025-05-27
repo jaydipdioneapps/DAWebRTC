@@ -129,53 +129,53 @@ public class DAWebRTC: NSObject {
         
         convertViewToRTCMTLVideoView(view: view) { rtcView in
             self.localVideoContainerView = rtcView
-        }
-        
-        if type == .audio {
-            self.localAudioTrack = self.peerConnectionFactory.audioTrack(withTrackId: "audio0")
-            completion(true)
-            return
-        }
-        
-        // Video call setup
-        let videoSource = peerConnectionFactory.videoSource()
-        let cameraCapturer = RTCCameraVideoCapturer(delegate: videoSource)
-
-        guard let camera = RTCCameraVideoCapturer.captureDevices().first(where: { $0.position == .front }) else {
-            debugPrint("❌ No front camera found.")
-            completion(false)
-            return
-        }
-
-        guard let best = bestFormat(for: camera) else {
-            debugPrint("❌ No suitable video format found.")
-            completion(false)
-            return
-        }
-
-        let format = best.format
-        let fps = best.fps
-
-        cameraCapturer.startCapture(with: camera, format: format, fps: fps) { error in
-            if let error = error {
-                debugPrint("❌ Failed to start capture: \(error.localizedDescription)")
-                completion(false)
-            } else {
-                self.capturer = cameraCapturer
+            
+            if type == .audio {
                 self.localAudioTrack = self.peerConnectionFactory.audioTrack(withTrackId: "audio0")
-                self.localVideoTrack = self.peerConnectionFactory.videoTrack(with: videoSource, trackId: "video0")
-
-                if isNeedToAddPeerConnection {
-                    if let peerConnection = self.peerConnections[user], let track = self.localVideoTrack {
-                        peerConnection.add(track, streamIds: [self.streamId])
-                    }
-                }
-                guard let localView = self.localVideoContainerView else {
-                    completion(false)
-                    return
-                }
-                self.localVideoTrack?.add(localView)
                 completion(true)
+                return
+            }
+            
+            // Video call setup
+            let videoSource = peerConnectionFactory.videoSource()
+            let cameraCapturer = RTCCameraVideoCapturer(delegate: videoSource)
+
+            guard let camera = RTCCameraVideoCapturer.captureDevices().first(where: { $0.position == .front }) else {
+                debugPrint("❌ No front camera found.")
+                completion(false)
+                return
+            }
+
+            guard let best = bestFormat(for: camera) else {
+                debugPrint("❌ No suitable video format found.")
+                completion(false)
+                return
+            }
+
+            let format = best.format
+            let fps = best.fps
+
+            cameraCapturer.startCapture(with: camera, format: format, fps: fps) { error in
+                if let error = error {
+                    debugPrint("❌ Failed to start capture: \(error.localizedDescription)")
+                    completion(false)
+                } else {
+                    self.capturer = cameraCapturer
+                    self.localAudioTrack = self.peerConnectionFactory.audioTrack(withTrackId: "audio0")
+                    self.localVideoTrack = self.peerConnectionFactory.videoTrack(with: videoSource, trackId: "video0")
+
+                    if isNeedToAddPeerConnection {
+                        if let peerConnection = self.peerConnections[user], let track = self.localVideoTrack {
+                            peerConnection.add(track, streamIds: [self.streamId])
+                        }
+                    }
+                    guard let localView = self.localVideoContainerView else {
+                        completion(false)
+                        return
+                    }
+                    self.localVideoTrack?.add(localView)
+                    completion(true)
+                }
             }
         }
     }
