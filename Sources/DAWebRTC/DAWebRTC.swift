@@ -39,6 +39,7 @@ public class DAWebRTC: NSObject {
     public var remoteVideoTracks: [String: RTCVideoTrack] = [:]
     
     public var remoteContainerView: RTCMTLVideoView?
+    public var localVideoContainerView = RTCMTLVideoView?
     public var remoteViewUI: UIView?
     
     public var currentVideoTrack: RTCVideoTrack?
@@ -174,14 +175,14 @@ public class DAWebRTC: NSObject {
 //    }
     
     public func setupLocalStream(view: UIView, remoteView: UIView, type: CallType, isNeedToAddPeerConnection: Bool = false, user: String = "", completion: @escaping (Bool) -> Void) {
-        var videoView = RTCMTLVideoView()
+        
         convertViewToRTCMTLVideoView(view: view) { rtcView in
-            videoView = rtcView
+            localVideoContainerView = rtcView
         }
 
         convertViewToRTCMTLVideoView(view: remoteView) { rtcView in
-                self.remoteContainerView = rtcView
-                self.remoteContainerView?.delegate = self
+            self.remoteContainerView = rtcView
+            self.remoteContainerView?.delegate = self
         }
         
         if type == .audio {
@@ -224,7 +225,7 @@ public class DAWebRTC: NSObject {
                     }
                 }
 
-                self.localVideoTrack?.add(videoView)
+                self.localVideoTrack?.add(localVideoContainerView)
                 completion(true)
             }
         }
@@ -826,9 +827,8 @@ public class DAWebRTC: NSObject {
         }
     }
     
-    public func addRemoteVideoTrack(view: UIView, userId: String){
-        convertViewToRTCMTLVideoView(view: view) { rtcView in
-            rtcView.delegate = self
+    public func addRemoteVideoTrack(view: UIView, userId: String, isRemote: Bool){
+        convertViewToRTCMTLVideoView(view: view, isRemote: isRemote) { rtcView in
             self.remoteVideoTracks[userId]?.add(rtcView)
         }
     }
