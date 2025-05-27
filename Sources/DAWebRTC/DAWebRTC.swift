@@ -123,17 +123,10 @@ public class DAWebRTC: NSObject {
         }
     }
 
-    public func setupLocalStream(view: UIView, remoteView: UIView, type: CallType, isNeedToAddPeerConnection: Bool = false, user: String = "", completion: @escaping (Bool) -> Void) {
+    public func setupLocalStream(view: UIView, type: CallType, isNeedToAddPeerConnection: Bool = false, user: String = "", completion: @escaping (Bool) -> Void) {
         
         convertViewToRTCMTLVideoView(view: view) { rtcView in
             self.localVideoContainerView = rtcView
-            debugPrint("setupLocalStream ------ localVideoContainerView")
-        }
-
-        convertViewToRTCMTLVideoView(view: remoteView) { rtcView in
-            self.remoteContainerView = rtcView
-            self.remoteContainerView?.delegate = self
-            debugPrint("setupLocalStream ------ remoteContainerView")
         }
         
         if type == .audio {
