@@ -828,6 +828,7 @@ public class DAWebRTC: NSObject {
     
     public func addRemoteVideoTrack(view: UIView, userId: String){
         convertViewToRTCMTLVideoView(view: view) { rtcView in
+            rtcView.delegate = self
             self.remoteVideoTracks[userId]?.add(rtcView)
         }
     }
