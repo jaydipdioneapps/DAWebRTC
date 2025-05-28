@@ -71,7 +71,7 @@ public class DAWebRTC: NSObject {
         
         let configuration = RTCConfiguration()
         configuration.iceServers = iceServers
-        configuration.iceTransportPolicy = .relay
+        configuration.iceTransportPolicy = .all
         configuration.sdpSemantics = .unifiedPlan
         configuration.continualGatheringPolicy = .gatherContinually
         
