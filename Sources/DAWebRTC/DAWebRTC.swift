@@ -64,7 +64,7 @@ public class DAWebRTC: NSObject {
     
     
     //MARK: - Create peer connection
-    func createPeerConnection(for userId: String, type: CallType, isNeedToCreateNew : Bool = false) -> RTCPeerConnection? {
+    public func createPeerConnection(for userId: String, type: CallType, isNeedToCreateNew : Bool = false) -> RTCPeerConnection? {
         if let peerConnection = peerConnections[userId], !isNeedToCreateNew {
             return peerConnection
         }
@@ -257,7 +257,7 @@ public class DAWebRTC: NSObject {
         }
     }
 
-    func createOfferForParticipant(peerConnection: RTCPeerConnection,
+   public func createOfferForParticipant(peerConnection: RTCPeerConnection,
                                          userId: String,
                                          completion: @escaping (Result<[String: String], Error>) -> Void) {
         let constraints = RTCMediaConstraints(
