@@ -643,22 +643,12 @@ public class DAWebRTC: NSObject {
         isAudioMuted = false
         localAudioTrack?.isEnabled = true
         sendAudioMuteStatus(isMuted: false)
-        if callInitiateType == .incoming {
-            appleCallKit.setMuteState(false, of: channelName)
-        } else {
-            appleCallKit.setMuteState(false, of: channelName)
-        }
     }
 
     public func disableAudio() {
         isAudioMuted = true
         localAudioTrack?.isEnabled = false
         sendAudioMuteStatus(isMuted: true)
-        if callInitiateType == .incoming {
-            appleCallKit.setMuteState(true, of: channelName)
-        } else {
-            appleCallKit.setMuteState(true, of: channelName)
-        }
     }
 
     func sendAudioMuteStatus(isMuted: Bool) {
