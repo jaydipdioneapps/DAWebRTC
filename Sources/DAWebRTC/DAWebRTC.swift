@@ -86,7 +86,15 @@ public class DAWebRTC: NSObject {
         peerConnection.delegate = self
         
         if self.localAudioTrack == nil {
-            self.localAudioTrack = self.peerConnectionFactory.audioTrack(withTrackId: "audio0")
+            let audioConstraints = RTCMediaConstraints(mandatoryConstraints: [
+                "googEchoCancellation": "true",     // Removes echo
+                "googAutoGainControl": "true",      // Manages mic volume
+                "googHighpassFilter": "true",       // Removes low frequency noise
+                "googNoiseSuppression": "true"      // Suppresses background noise
+            ], optionalConstraints: nil)
+            let audioSource = peerConnectionFactory.audioSource(with: audioConstraints)
+
+            self.localAudioTrack = self.peerConnectionFactory.audioTrack(with: audioSource, trackId: "audio0")
         }
         peerConnection.add(self.localAudioTrack!, streamIds: [streamId])
         
@@ -94,6 +102,9 @@ public class DAWebRTC: NSObject {
             if self.localVideoTrack == nil {
                 let videoSource = peerConnectionFactory.videoSource()
                 self.localVideoTrack = peerConnectionFactory.videoTrack(with: videoSource, trackId: "video0")
+            }
+            if isAudioMuted {
+                disableAudio()
             }
             peerConnection.add(self.localVideoTrack!, streamIds: [streamId])
         }
@@ -316,9 +327,9 @@ public class DAWebRTC: NSObject {
                 debugPrint("Error setting local description: \(error.localizedDescription)")
                 return
             }
+            self.createAnswer(for: userId)
             self.remoteDescriptionSet.insert(userId)
             self.flushPendingCandidates(for: userId)
-            self.createAnswer(for: userId)
             self.delegate?.daWebRTC(self, pendingHandleOffer: userId, isInviting: isInviting, sdp: sdp, isRejoin: false, groupId: self.isGroupId)
         }
         if isRejoin {
@@ -632,12 +643,22 @@ public class DAWebRTC: NSObject {
         isAudioMuted = false
         localAudioTrack?.isEnabled = true
         sendAudioMuteStatus(isMuted: false)
+        if callInitiateType == .incoming {
+            appleCallKit.setMuteState(false, of: channelName)
+        } else {
+            appleCallKit.setMuteState(false, of: channelName)
+        }
     }
 
     public func disableAudio() {
         isAudioMuted = true
         localAudioTrack?.isEnabled = false
         sendAudioMuteStatus(isMuted: true)
+        if callInitiateType == .incoming {
+            appleCallKit.setMuteState(true, of: channelName)
+        } else {
+            appleCallKit.setMuteState(true, of: channelName)
+        }
     }
 
     func sendAudioMuteStatus(isMuted: Bool) {
@@ -681,8 +702,9 @@ public class DAWebRTC: NSObject {
         isSpekerOn = true
         let audioSession = AVAudioSession.sharedInstance()
         do {
-            try audioSession.setCategory(.playAndRecord, mode: .default, options: [.defaultToSpeaker, .allowBluetooth])
+            try audioSession.setCategory(.playAndRecord, mode: .voiceChat, options: [.defaultToSpeaker, .allowBluetooth, .allowBluetoothA2DP, .allowAirPlay, .duckOthers])
             try audioSession.setActive(true)
+            debugPrint("Speaker enabled")
         } catch {
             debugPrint("Error enabling speaker: \(error.localizedDescription)")
         }
@@ -693,9 +715,10 @@ public class DAWebRTC: NSObject {
         isSpekerOn = false
         let audioSession = AVAudioSession.sharedInstance()
         do {
-            try audioSession.setCategory(.playAndRecord, mode: .default, options: [.allowBluetooth])
+            try audioSession.setCategory(.playAndRecord, mode: .voiceChat, options: [.allowBluetooth])
             try audioSession.overrideOutputAudioPort(.none) // Route audio to earpiece
             try audioSession.setActive(true)
+            debugPrint("Speaker disabled (audio routed to earpiece)")
         } catch {
             debugPrint("Error disabling speaker: \(error.localizedDescription)")
         }
